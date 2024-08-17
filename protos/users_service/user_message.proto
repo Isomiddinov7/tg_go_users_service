@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option go_package = "genproto/users_service";
+
+package users_service;
+import "user.proto";
+
+service UserMessageList{
+    rpc CreateUserMessage(MessageRequest) returns(Empty){}
+    rpc CreateAdminMessage(MessageRequest) returns(Empty){}
+    rpc UpdateMessage(UpdateMessageRequest) returns(Empty){}
+    rpc GetUserMessage(GetMessageUserRequest) returns(GetMessageUserResponse){}
+    rpc GetAdminAllMessage(Empty) returns(GetMessageAdminResponse){}
+}
+
+message UpdateMessageRequest{
+    string id = 1;
+    string read = 2;
+}
+
+message MessageRequest{
+    string text = 1;
+    string file = 2;
+    string user_id = 3;
+}
+
+message Message{
+    string id = 1;
+    string text = 2;
+    string file = 3;
+    string status = 4;
+    string read = 5;
+    string user_id = 6;
+    string created_at = 7;
+}
+
+message MessageResponse{
+    string id = 1;
+    string status = 2;
+    string message = 3;
+    string created_at = 4;
+    string read = 5;
+}
+
+message GetMessageUserRequest{
+    string user_id = 1;
+}
+
+message GetMessageUserResponse{
+    repeated Message messages = 1;
+    int64 count = 2;
+}
+
+message AdminResponse{
+    string user_id = 1;
+    string first_name = 2;
+    int64 message_count = 3;
+    string last_message = 4;
+    string file = 5;
+}
+
+message GetMessageAdminResponse{
+    repeated AdminResponse admin_message = 1;
+    int64 count = 2;
+}

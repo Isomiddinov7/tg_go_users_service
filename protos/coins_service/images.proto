@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "genproto/coins_service";
+
+package coins_service;
+import "coin.proto";
+
+service ImagesService{
+    rpc ImageUpload(ImageData) returns (ImagePrimaryKey){}
+    rpc ImageDelete(ImagePrimaryKey) returns(Empty){}
+    rpc GetFile(ImagePrimaryKey) returns(ImageUrl){}
+}
+
+message ImagePrimaryKey{
+    string id = 1;
+}
+
+message ImageData{
+    string id = 1;
+    string image_link = 2;
+}
+
+message ImageUrl{
+    string image_url = 1;
+}

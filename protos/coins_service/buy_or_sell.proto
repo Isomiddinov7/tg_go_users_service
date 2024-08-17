@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+option go_package = "genproto/coins_service";
+
+package coins_service;
+
+
+service BuyOrSell{
+    rpc GetSell(BuyOrSellRequest) returns(BuyOrSellResponse){}
+    rpc GetBuy(BuyOrSellRequest) returns(BuyOrSellResponse){}
+    rpc GetUserBuy(GetListUserBuyOrSellRequest) returns(UserBuy){}
+    rpc GetUserSell(GetListUserBuyOrSellRequest) returns (UserSell){}
+}
+
+message BuyOrSellRequest{
+    string user_id = 1;
+    string coin_id = 2;
+    string coin_amount = 3;
+}
+
+message BuyOrSellResponse{
+    string admin_address = 1;
+    string coin_amount = 2;
+    string amount_price = 3;
+}
+
+message UserBuy{
+    string id = 1;
+    string user_address = 2;
+    string price = 3;
+    string amount_coin = 4;
+    string coin_price = 5;
+    string coin_name = 6;
+    string image = 7;
+}
+
+message UserSell{
+    string id = 1;
+    string card_number = 2;
+    string price = 3;
+    string amount_coin = 4;
+    string coin_price = 5;
+    string coin_name = 6;
+    string image = 7;
+}
+
+message GetListUserBuyOrSellRequest{
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListUserSellResponse{
+    int64 count = 1;
+    repeated UserSell user_sell = 2;
+}
+
+
+message GetListUserBuyResponse{
+    int64 count = 1;
+    repeated UserBuy user_buy = 2;
+}

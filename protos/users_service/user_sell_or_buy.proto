@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+option go_package = "genproto/users_service";
+
+package users_service;
+import "user.proto";
+
+service UserSellOrBuyService{
+    rpc UserSell(UserSellRequest) returns (Empty){}
+    rpc UserBuy(UserBuyRequest) returns(Empty){}
+    rpc AllUserSell(GetListUserTransactionRequest) returns(GetListUserSellTransactionResponse){}
+    rpc AllUserBuy(GetListUserTransactionRequest) returns(GetListUserBuyTransactionResponse){}
+}
+
+message UserBuyTransaction{
+    string id = 1;
+    string coin = 2;
+    string user = 3;
+    string coin_price = 4;
+    string coin_amount = 5;
+    string all_price = 6;
+    string status = 7;
+    string user_address = 8;
+    string CheckImg = 9;
+    string message = 10;
+    string created_at = 11;
+}
+
+message UserSellTransaction{
+    string id = 1;
+    string coin_id = 2;
+    string user_id = 3;
+    string coin_price = 4;
+    string coin_amount = 5;
+    string all_price = 6;
+    string status = 7;
+    string card_number = 8;
+    string CheckImg = 9;
+    string message = 10;
+    string created_at = 11;
+}
+
+message UserSellRequest{
+    string user_id = 1;
+    string coin_id = 2;
+    string coin_amount = 3;
+    string message = 4;
+    string card_number = 5;
+    string check_img = 6;
+}
+
+message UserBuyRequest{
+    string user_id = 1;
+    string coin_id = 2;
+    string address = 3;
+    string coin_amount = 4;
+    string message = 5;
+    string pay_img = 6;
+}
+
+message GetListUserTransactionRequest{
+    int64 offset = 1;
+    int64 limit = 2;
+    string status = 3;
+}
+
+message GetListUserSellTransactionResponse{
+    int64 count = 1;
+    repeated UserSellTransaction user_transaction = 2;
+}
+
+message GetListUserBuyTransactionResponse{
+    int64 count = 1;
+    repeated UserBuyTransaction user_transaction = 2;
+}

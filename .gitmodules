@@ -1,0 +1,3 @@
+[submodule "tg_protos"]
+	path = tg_protos
+	url = git@github.com:Isomiddinov7/tg_protos.git

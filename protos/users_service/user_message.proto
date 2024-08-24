@@ -11,6 +11,7 @@ service UserMessageList{
     rpc UpdateMessage(UpdateMessageRequest) returns(Empty){}
     rpc GetUserMessage(GetMessageUserRequest) returns(GetMessageUserResponse){}
     rpc GetAdminAllMessage(Empty) returns(GetMessageAdminResponse){}
+    rpc GetMessageAdminID(GetMessageUserRequest) returns(GetMessageAdminById){}
 }
 
 message UpdateMessageRequest{
@@ -54,12 +55,20 @@ message GetMessageUserResponse{
 message AdminResponse{
     string user_id = 1;
     string first_name = 2;
-    int64 message_count = 3;
-    string last_message = 4;
-    string file = 5;
+    string last_name = 3;
+    int64 message_count = 4;
+    string last_message = 5;
+    string file = 6;
 }
 
 message GetMessageAdminResponse{
     repeated AdminResponse admin_message = 1;
     int64 count = 2;
+}
+
+message GetMessageAdminById{
+    string first_name = 1;
+    string last_name = 2;
+    string file = 3;
+    repeated Message message = 4;
 }

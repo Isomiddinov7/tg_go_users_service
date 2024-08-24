@@ -24,6 +24,7 @@ const (
 	UserMessageList_UpdateMessage_FullMethodName      = "/users_service.UserMessageList/UpdateMessage"
 	UserMessageList_GetUserMessage_FullMethodName     = "/users_service.UserMessageList/GetUserMessage"
 	UserMessageList_GetAdminAllMessage_FullMethodName = "/users_service.UserMessageList/GetAdminAllMessage"
+	UserMessageList_GetMessageAdminID_FullMethodName  = "/users_service.UserMessageList/GetMessageAdminID"
 )
 
 // UserMessageListClient is the client API for UserMessageList service.
@@ -35,6 +36,7 @@ type UserMessageListClient interface {
 	UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetUserMessage(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageUserResponse, error)
 	GetAdminAllMessage(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetMessageAdminResponse, error)
+	GetMessageAdminID(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageAdminById, error)
 }
 
 type userMessageListClient struct {
@@ -90,6 +92,15 @@ func (c *userMessageListClient) GetAdminAllMessage(ctx context.Context, in *Empt
 	return out, nil
 }
 
+func (c *userMessageListClient) GetMessageAdminID(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageAdminById, error) {
+	out := new(GetMessageAdminById)
+	err := c.cc.Invoke(ctx, UserMessageList_GetMessageAdminID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserMessageListServer is the server API for UserMessageList service.
 // All implementations must embed UnimplementedUserMessageListServer
 // for forward compatibility
@@ -99,6 +110,7 @@ type UserMessageListServer interface {
 	UpdateMessage(context.Context, *UpdateMessageRequest) (*Empty, error)
 	GetUserMessage(context.Context, *GetMessageUserRequest) (*GetMessageUserResponse, error)
 	GetAdminAllMessage(context.Context, *Empty) (*GetMessageAdminResponse, error)
+	GetMessageAdminID(context.Context, *GetMessageUserRequest) (*GetMessageAdminById, error)
 	mustEmbedUnimplementedUserMessageListServer()
 }
 
@@ -120,6 +132,9 @@ func (UnimplementedUserMessageListServer) GetUserMessage(context.Context, *GetMe
 }
 func (UnimplementedUserMessageListServer) GetAdminAllMessage(context.Context, *Empty) (*GetMessageAdminResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAdminAllMessage not implemented")
+}
+func (UnimplementedUserMessageListServer) GetMessageAdminID(context.Context, *GetMessageUserRequest) (*GetMessageAdminById, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessageAdminID not implemented")
 }
 func (UnimplementedUserMessageListServer) mustEmbedUnimplementedUserMessageListServer() {}
 
@@ -224,6 +239,24 @@ func _UserMessageList_GetAdminAllMessage_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserMessageList_GetMessageAdminID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserMessageListServer).GetMessageAdminID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserMessageList_GetMessageAdminID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserMessageListServer).GetMessageAdminID(ctx, req.(*GetMessageUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserMessageList_ServiceDesc is the grpc.ServiceDesc for UserMessageList service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +283,10 @@ var UserMessageList_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAdminAllMessage",
 			Handler:    _UserMessageList_GetAdminAllMessage_Handler,
+		},
+		{
+			MethodName: "GetMessageAdminID",
+			Handler:    _UserMessageList_GetMessageAdminID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

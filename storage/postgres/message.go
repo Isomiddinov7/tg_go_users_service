@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
 
@@ -167,7 +166,6 @@ func (r *userMessageRepo) GetUserMessage(ctx context.Context, req *users_service
 			&created_at,
 		)
 		if err != nil {
-			fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>")
 			return nil, err
 		}
 
@@ -193,6 +191,7 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 				COUNT(m.*) OVER(),
 				m.user_id,
 				u.first_name,
+				u.last_name,
 				m.file,
 				m.message
 			FROM "messages" as m
@@ -211,6 +210,7 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 			message      users_service.AdminResponse
 			last_message sql.NullString
 			first_name   sql.NullString
+			last_name    sql.NullString
 			user_id      sql.NullString
 			file         sql.NullString
 		)
@@ -218,6 +218,7 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 			&resp.Count,
 			&user_id,
 			&first_name,
+			&last_name,
 			&file,
 			&last_message,
 		)
@@ -226,12 +227,85 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 		}
 		message = users_service.AdminResponse{
 			FirstName:   first_name.String,
+			LastName:    last_message.String,
 			UserId:      user_id.String,
 			File:        file.String,
 			LastMessage: last_message.String,
 		}
 		resp.AdminMessage = append(resp.AdminMessage, &message)
 
+	}
+	return &resp, nil
+}
+
+func (r *userMessageRepo) GetMessageAdminID(ctx context.Context, req *users_service.GetMessageUserRequest) (*users_service.GetMessageAdminById, error) {
+	var (
+		query = `
+			SELECT
+				u.first_name,
+				u.last_name,
+				m.file,
+				m.id,
+				m.message,
+				m.status,
+				m.read,
+				m.user_id,
+				m.created_at
+			FROM "messages" as m
+			JOIN "users" as u ON u.id = m.user_id
+			WHERE m.user_id = $1
+			ORDER BY m.created_at DESC
+
+		`
+		first_name sql.NullString
+		last_name  sql.NullString
+		resp       users_service.GetMessageAdminById
+	)
+	rows, err := r.db.Query(ctx, query, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			messages   users_service.Message
+			id         sql.NullString
+			message    sql.NullString
+			file       sql.NullString
+			status     sql.NullString
+			read       sql.NullString
+			user_id    sql.NullString
+			created_at sql.NullString
+		)
+		err = rows.Scan(
+			&first_name,
+			&last_name,
+			&file,
+			&id,
+			&message,
+			&status,
+			&read,
+			&user_id,
+			&created_at,
+		)
+		if err != nil {
+			return nil, err
+		}
+		messages = users_service.Message{
+			Id:     id.String,
+			Text:   message.String,
+			File:   file.String,
+			Status: status.String,
+			Read:   read.String,
+			UserId: user_id.String,
+		}
+
+		resp.Message = append(resp.Message, &messages)
+		resp.FirstName = first_name.String
+		resp.LastName = last_name.String
+		resp.File = file.String
 	}
 	return &resp, nil
 }

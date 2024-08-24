@@ -25,6 +25,7 @@ type UserMessageRepoI interface {
 	UpdateMessage(ctx context.Context, req *users_service.UpdateMessageRequest) (int64, error)
 	GetUserMessage(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageUserResponse, err error)
 	GetAdminAllMessage(ctx context.Context) (resp *users_service.GetMessageAdminResponse, err error)
+	GetMessageAdminID(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageAdminById, err error)
 }
 
 type UserTransactionRepoI interface {

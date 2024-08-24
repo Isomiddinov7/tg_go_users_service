@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = "genproto/coins_service";
+package coins_service;
+
+service HistoryService{
+    rpc HistoryUser(HistoryUserRequest) returns(HistoryUserResponse){}
+}
+
+message HistoryUserRequest{
+    string user_id = 1;
+}
+
+message HistoriesUser{
+    string id = 1;
+    string status = 2;
+    string coin_img = 3;
+    string coin_amount = 4;
+    string coin_price = 5;
+    string all_price = 6;
+    string address = 7;
+    string card_number = 8;
+    string date_time = 9;
+}
+
+message HistoryUserResponse{
+    repeated HistoriesUser histories = 1;
+    int64 count = 2;
+}

@@ -43,7 +43,7 @@ func Load() Config {
 	config := Config{}
 
 	config.ServiceName = cast.ToString(getOrReturnDefaultValue("SERVICE_NAME", "tg_go_users_service"))
-	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", DebugMode))
+	config.Environment = cast.ToString(getOrReturnDefaultValue("ENVIRONMENT", "debug"))
 	config.Version = cast.ToString(getOrReturnDefaultValue("VERSION", "1.0"))
 
 	config.PostgresHost = cast.ToString(getOrReturnDefaultValue("POSTGRES_HOST", "localhost"))

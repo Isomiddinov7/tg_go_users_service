@@ -10,6 +10,7 @@ type StorageI interface {
 	User() UserRepoI
 	UserTransaction() UserTransactionRepoI
 	Messages() UserMessageRepoI
+	Auth() AuthRepoI
 }
 
 type UserRepoI interface {
@@ -33,4 +34,8 @@ type UserTransactionRepoI interface {
 	UserBuy(ctx context.Context, req *users_service.UserBuyRequest) error
 	AllUserSell(ctx context.Context, req *users_service.GetListUserTransactionRequest) (*users_service.GetListUserSellTransactionResponse, error)
 	AllUserBuy(ctx context.Context, req *users_service.GetListUserTransactionRequest) (*users_service.GetListUserBuyTransactionResponse, error)
+}
+
+type AuthRepoI interface {
+	SignIn(ctx context.Context, req *users_service.Credentials) (resp *users_service.CredetialId, err error)
 }

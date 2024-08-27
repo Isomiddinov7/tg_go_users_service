@@ -12,12 +12,14 @@ type ServiceManagerI interface {
 	UserService() users_service.UserServiceClient
 	UserTransactionService() users_service.UserSellOrBuyServiceClient
 	Messages() users_service.UserMessageListClient
+	Auth() users_service.AuthServiceClient
 }
 
 type grpcClients struct {
 	userService            users_service.UserServiceClient
 	usertransactionService users_service.UserSellOrBuyServiceClient
 	messageService         users_service.UserMessageListClient
+	authService            users_service.AuthServiceClient
 }
 
 func NewGrpcClients(cfg config.Config) (ServiceManagerI, error) {
@@ -32,6 +34,7 @@ func NewGrpcClients(cfg config.Config) (ServiceManagerI, error) {
 		userService:            users_service.NewUserServiceClient(connUsersService),
 		usertransactionService: users_service.NewUserSellOrBuyServiceClient(connUsersService),
 		messageService:         users_service.NewUserMessageListClient(connUsersService),
+		authService:            users_service.NewAuthServiceClient(connUsersService),
 	}, nil
 }
 
@@ -45,4 +48,8 @@ func (g *grpcClients) UserTransactionService() users_service.UserSellOrBuyServic
 
 func (g *grpcClients) Messages() users_service.UserMessageListClient {
 	return g.messageService
+}
+
+func (g *grpcClients) Auth() users_service.AuthServiceClient {
+	return g.authService
 }

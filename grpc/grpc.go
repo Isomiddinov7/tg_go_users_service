@@ -17,6 +17,7 @@ func SetUpServer(cfg config.Config, log logger.LoggerI, strg storage.StorageI, s
 	users_service.RegisterUserServiceServer(grpcServer, service.NewUserService(cfg, log, strg, srvc))
 	users_service.RegisterUserSellOrBuyServiceServer(grpcServer, service.NewUserTransactionService(cfg, log, strg, srvc))
 	users_service.RegisterUserMessageListServer(grpcServer, service.NewMessageService(cfg, log, strg, srvc))
+	users_service.RegisterAuthServiceServer(grpcServer, service.NewAuthService(cfg, log, strg, srvc))
 	reflection.Register(grpcServer)
 	return
 }

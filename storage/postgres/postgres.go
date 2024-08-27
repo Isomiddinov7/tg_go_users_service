@@ -14,6 +14,7 @@ type Store struct {
 	user             storage.UserRepoI
 	user_transaction storage.UserTransactionRepoI
 	message          storage.UserMessageRepoI
+	auth             storage.AuthRepoI
 }
 
 func NewPostgres(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
@@ -68,4 +69,11 @@ func (s *Store) Messages() storage.UserMessageRepoI {
 	}
 
 	return s.message
+}
+
+func (s *Store) Auth() storage.AuthRepoI {
+	if s.auth == nil {
+		s.auth = NewAuthRepo(s.db)
+	}
+	return s.auth
 }

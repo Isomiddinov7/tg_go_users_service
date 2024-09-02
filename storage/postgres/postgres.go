@@ -19,7 +19,7 @@ type Store struct {
 
 func NewPostgres(ctx context.Context, cfg config.Config) (storage.StorageI, error) {
 	config, err := pgxpool.ParseConfig(fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		"postgres://%s:%s@%s:%d/%s?sslmode=require",
 		cfg.PostgresUser,
 		cfg.PostgresPassword,
 		cfg.PostgresHost,

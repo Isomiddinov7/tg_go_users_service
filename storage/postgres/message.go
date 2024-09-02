@@ -36,12 +36,7 @@ func (r *userMessageRepo) CreateUserMessage(ctx context.Context, req *users_serv
 		`
 	)
 
-	var fileValue interface{}
-	if req.File == "" {
-		fileValue = nil
-	} else {
-		fileValue = req.File
-	}
+
 
 	_, err := r.db.Exec(ctx, query,
 		&messageId,
@@ -50,7 +45,6 @@ func (r *userMessageRepo) CreateUserMessage(ctx context.Context, req *users_serv
 		"false",
 		"dbecf401-64b3-4b9b-829a-c8b061431286",
 		req.UserId,
-		fileValue,
 	)
 	if err != nil {
 		return err
@@ -77,13 +71,6 @@ func (r *userMessageRepo) CreateAdminMessage(ctx context.Context, req *users_ser
 		`
 	)
 
-	var fileValue interface{}
-	if req.File == "" {
-		fileValue = nil
-	} else {
-		fileValue = req.File
-	}
-
 	_, err := r.db.Exec(ctx, query,
 		messageId,
 		"admin",
@@ -91,7 +78,6 @@ func (r *userMessageRepo) CreateAdminMessage(ctx context.Context, req *users_ser
 		"false",
 		"dbecf401-64b3-4b9b-829a-c8b061431286",
 		req.UserId,
-		fileValue,
 	)
 	if err != nil {
 		return err

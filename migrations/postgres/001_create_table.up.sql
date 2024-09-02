@@ -10,15 +10,10 @@ CREATE TABLE IF NOT EXISTS "super_admin"(
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS "images"(
-    "id" UUID NOT NULL PRIMARY KEY,
-    "image_link" TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS "coins"(
     "id" UUID NOT NULL PRIMARY KEY,
     "name" VARCHAR NOT NULL,
-    "coin_icon" UUID NOT NULL REFERENCES "images"("id"),
+    "coin_icon" VARCHAR NOT NULL,
     "coin_buy_price" VARCHAR NOT NULL,
     "coin_sell_price" VARCHAR NOT NULL,
     "address" VARCHAR,
@@ -67,7 +62,7 @@ CREATE TABLE IF NOT EXISTS "user_transaction"(
     "id" UUID NOT NULL PRIMARY KEY,
     "coin_id" UUID NOT NULL REFERENCES "coins"("id"),
     "user_id" UUID NOT NULL REFERENCES "users"("id"),
-    "user_confirmation_img" UUID NOT NULL REFERENCES "images"("id"),
+    "user_confirmation_img" VARCHAR NOT NULL,
     "coin_price" VARCHAR NOT NULL,
     "coin_amount" VARCHAR NOT NULL,
     "all_price" VARCHAR NOT NULL,
@@ -86,7 +81,7 @@ CREATE TABLE IF NOT EXISTS "messages"(
     "read" MessageReadStatus NOT NULL,
     "admin_id" UUID NOT NULL REFERENCES "admin"("id"),
     "user_id" UUID NOT NULL REFERENCES "users"("id"), 
-    "file" UUID  REFERENCES "images"("id"),
+    "file" VARCHAR NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
 );
@@ -97,7 +92,7 @@ CREATE TABLE IF NOT EXISTS "messages"(
 [
       {"HalfCoinAmount": "0.5", "HalfCoinPrice": "650000"},
       {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
-    ]
+]
 -- CREATE TABLE IF NOT EXISTS "sell_coin"(
 --     "user_id" UUID NOT NULL REFERENCES "users"("id"),
 --     "coin_id" UUID NOT NULL REFERENCES "coins"("id"),

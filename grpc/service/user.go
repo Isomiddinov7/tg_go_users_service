@@ -76,7 +76,7 @@ func (i *UserService) Update(ctx context.Context, req *users_service.UpdateUser)
 
 func (i *UserService) Create(ctx context.Context, req *users_service.CreateUser) (resp *users_service.User, err error) {
 
-	bot, err := tgbotapi.NewBotAPI("7426036777:AAFtNhPM5S3aRk2TYd5QPkEKtIA9m45LNNg")
+	bot, err := tgbotapi.NewBotAPI("7426036777:AAEVbGwxCiCPwaOF03w7KyGLhhrR5EYSnhc")
 	if err != nil {
 		log.Panic(err)
 	}

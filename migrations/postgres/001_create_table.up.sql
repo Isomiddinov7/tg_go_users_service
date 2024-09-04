@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "users"(
     "last_name" VARCHAR,
     "username" VARCHAR,
     "status" StatusUser DEFAULT 'active',
-    "telegram_id" VARCHAR NOT NULL,
+    "telegram_id" VARCHAR UNIQUE NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
 );

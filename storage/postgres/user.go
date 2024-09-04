@@ -34,35 +34,25 @@ func (r *userRepo) Create(ctx context.Context, req *users_service.CreateUser) er
 				"telegram_id"
 			) VALUES ($1, $2, $3, $4, $5)
 		`
-		queryByTGId = `
-			SELECT 
-				id
-			FROM "telegram_user"
-			WHERE "telegram_id" = $1
-		`
-		dataid sql.NullString
 	)
 
-	err := r.db.QueryRow(ctx, queryByTGId, req.TelegramId).Scan(
-		&dataid,
+	_, err := r.db.Exec(ctx, query,
+		id,
+		req.FirstName,
+		req.LastName,
+		req.Username,
+		req.TelegramId,
 	)
 	if err != nil {
-		_, err := r.db.Exec(ctx, query,
-			id,
-			req.FirstName,
-			req.LastName,
-			req.Username,
-		)
-		if err != nil {
-			return err
-		}
+		fmt.Println(err)
+		return err
 	}
-	fmt.Println(">>>>>>>>>>>>>>>>>>>>", err)
 
 	return nil
 }
 
 func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKey) (*users_service.User, error) {
+	fmt.Println(req)
 	var (
 		query = `
 			SELECT

@@ -36,8 +36,6 @@ func (r *userMessageRepo) CreateUserMessage(ctx context.Context, req *users_serv
 		`
 	)
 
-
-
 	_, err := r.db.Exec(ctx, query,
 		&messageId,
 		"user",

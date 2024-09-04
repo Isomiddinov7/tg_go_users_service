@@ -3,16 +3,23 @@ syntax = "proto3";
 option go_package = "genproto/users_service";
 
 package users_service;
+import "user.proto";
 
 service AuthService{
-    rpc Login(Credentials)returns(CredetialId){}
+    rpc Auth(Req)returns(AuthResp){}
+    rpc Deserialize(DReq)returns(Empty){}
 }
 
-message Credentials{
+message Req{
     string login = 1;
     string password = 2;
 }
 
-message CredetialId{
-    string id = 1;
+message DReq{
+    string admin_id = 1;
+}
+
+message AuthResp{
+    string success = 1;
+    string user_id = 2;
 }

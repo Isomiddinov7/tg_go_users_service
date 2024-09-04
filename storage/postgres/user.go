@@ -22,6 +22,7 @@ func NewUserRepo(db *pgxpool.Pool) storage.UserRepoI {
 }
 
 func (r *userRepo) Create(ctx context.Context, req *users_service.CreateUser) error {
+
 	var (
 		id    = uuid.NewString()
 		query = `
@@ -30,25 +31,33 @@ func (r *userRepo) Create(ctx context.Context, req *users_service.CreateUser) er
 				"first_name",
 				"last_name",
 				"username",
-				"auth_date",
-				"hash",
-				"status"
-			) VALUES ($1, $2, $3, $4, $5, $6, $7)
+				"telegram_id"
+			) VALUES ($1, $2, $3, $4, $5)
 		`
+		queryByTGId = `
+			SELECT 
+				id
+			FROM "telegram_user"
+			WHERE "telegram_id" = $1
+		`
+		dataid sql.NullString
 	)
 
-	_, err := r.db.Exec(ctx, query,
-		id,
-		req.FirstName,
-		req.LastName,
-		req.Username,
-		req.AuthDate,
-		req.Hash,
-		req.Status,
+	err := r.db.QueryRow(ctx, queryByTGId, req.TelegramId).Scan(
+		&dataid,
 	)
 	if err != nil {
-		return err
+		_, err := r.db.Exec(ctx, query,
+			id,
+			req.FirstName,
+			req.LastName,
+			req.Username,
+		)
+		if err != nil {
+			return err
+		}
 	}
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>", err)
 
 	return nil
 }
@@ -61,23 +70,21 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 				"first_name",
 				"last_name",
 				"username",
-				"auth_date",
-				"hash",
 				"status",
+				"telegram_id",
 				"created_at",
 				"updated_at"
 			FROM "users"
-			WHERE "id"= $1
+			WHERE "telegram_id"= $1
 		`
-		id         sql.NullString
-		first_name sql.NullString
-		last_name  sql.NullString
-		username   sql.NullString
-		auth_date  sql.NullString
-		hash       sql.NullString
-		status     sql.NullString
-		created_at sql.NullString
-		updated_at sql.NullString
+		id          sql.NullString
+		first_name  sql.NullString
+		last_name   sql.NullString
+		username    sql.NullString
+		status      sql.NullString
+		telegram_id sql.NullString
+		created_at  sql.NullString
+		updated_at  sql.NullString
 	)
 
 	err := r.db.QueryRow(ctx, query, req.Id).Scan(
@@ -85,9 +92,8 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 		&first_name,
 		&last_name,
 		&username,
-		&auth_date,
-		&hash,
 		&status,
+		&telegram_id,
 		&created_at,
 		&updated_at,
 	)
@@ -96,15 +102,14 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 	}
 
 	return &users_service.User{
-		Id:        id.String,
-		FirstName: first_name.String,
-		LastName:  last_name.String,
-		Username:  username.String,
-		AuthDate:  auth_date.String,
-		Hash:      hash.String,
-		Status:    status.String,
-		CreatedAt: created_at.String,
-		UpdatedAt: updated_at.String,
+		Id:         id.String,
+		FirstName:  first_name.String,
+		LastName:   last_name.String,
+		Username:   username.String,
+		Status:     status.String,
+		TelegramId: telegram_id.String,
+		CreatedAt:  created_at.String,
+		UpdatedAt:  updated_at.String,
 	}, nil
 }
 
@@ -136,9 +141,8 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 			"first_name",
 			"last_name",
 			"username",
-			"auth_date",
-			"hash",
 			"status",
+			"telegram_id",
 			"created_at",
 			"updated_at"
 		FROM "users"
@@ -153,16 +157,15 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 
 	for rows.Next() {
 		var (
-			user       users_service.User
-			id         sql.NullString
-			first_name sql.NullString
-			last_name  sql.NullString
-			username   sql.NullString
-			auth_date  sql.NullString
-			hash       sql.NullString
-			status     sql.NullString
-			created_at sql.NullString
-			updated_at sql.NullString
+			user        users_service.User
+			id          sql.NullString
+			first_name  sql.NullString
+			last_name   sql.NullString
+			username    sql.NullString
+			status      sql.NullString
+			telegram_id sql.NullString
+			created_at  sql.NullString
+			updated_at  sql.NullString
 		)
 		err = rows.Scan(
 			&resp.Count,
@@ -170,9 +173,8 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 			&first_name,
 			&last_name,
 			&username,
-			&auth_date,
-			&hash,
 			&status,
+			&telegram_id,
 			&created_at,
 			&updated_at,
 		)
@@ -181,15 +183,14 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 		}
 
 		user = users_service.User{
-			Id:        id.String,
-			FirstName: first_name.String,
-			LastName:  last_name.String,
-			Username:  username.String,
-			AuthDate:  auth_date.String,
-			Hash:      hash.String,
-			Status:    status.String,
-			CreatedAt: created_at.String,
-			UpdatedAt: updated_at.String,
+			Id:         id.String,
+			FirstName:  first_name.String,
+			LastName:   last_name.String,
+			Username:   username.String,
+			Status:     status.String,
+			TelegramId: telegram_id.String,
+			CreatedAt:  created_at.String,
+			UpdatedAt:  updated_at.String,
 		}
 
 		resp.Users = append(resp.Users, &user)

@@ -36,12 +36,13 @@ message UserBuy{
 
 message UserSell{
     string id = 1;
-    string card_number = 2;
-    string price = 3;
-    string amount_coin = 4;
-    string coin_price = 5;
-    string coin_name = 6;
-    string image = 7;
+    string card_holder_name = 2;
+    string card_number = 3;
+    string price = 4;
+    string amount_coin = 5;
+    string coin_price = 6;
+    string coin_name = 7;
+    string image = 8;
 }
 
 message GetListUserBuyOrSellRequest{

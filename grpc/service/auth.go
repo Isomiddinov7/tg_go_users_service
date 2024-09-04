@@ -29,10 +29,19 @@ func NewAuthService(cfg config.Config, log logger.LoggerI, strg storage.StorageI
 	}
 }
 
-func (i *AuthService) Login(ctx context.Context, req *users_service.Credentials) (resp *users_service.CredetialId, err error) {
-	resp, err = i.strg.Auth().SignIn(ctx, req)
+func (i *AuthService) Auth(ctx context.Context, req *users_service.Req) (resp *users_service.AuthResp, err error) {
+	resp, err = i.strg.Auth().Auth(ctx, req)
 	if err != nil {
 		i.log.Error("!!!user service->Login->Login--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return
+}
+func (i *AuthService) Deserialize(ctx context.Context, req *users_service.DReq) (resp *users_service.Empty, err error) {
+	err = i.strg.Auth().Deserialize(ctx, req)
+	if err != nil {
+		i.log.Error("!!!user service->Deserialize->Deserialize--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 

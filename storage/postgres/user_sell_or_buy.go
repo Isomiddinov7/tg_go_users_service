@@ -35,9 +35,10 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 				coin_price,
 				all_price,
 				status,
+				card_name,
 				payment_card,
 				message
-			) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+			) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		`
 		coin_price sql.NullString
 	)
@@ -112,6 +113,7 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 		&coin_price,
 		cast.ToString(summ),
 		"sell",
+		req.CardHolderName,
 		req.CardNumber,
 		req.Message,
 	)
@@ -235,6 +237,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 				ut.coin_price,
 				ut.all_price,
 				ut.status,
+				ut.card_name,
 				ut.payment_card,
 				ut.message,
 				ut.created_at
@@ -276,6 +279,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			coin_price            sql.NullString
 			all_price             sql.NullString
 			status                sql.NullString
+			card_name             sql.NullString
 			payment_card          sql.NullString
 			message               sql.NullString
 			created_at            sql.NullString
@@ -291,6 +295,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			&coin_price,
 			&all_price,
 			&status,
+			&card_name,
 			&payment_card,
 			&message,
 			&created_at,
@@ -300,17 +305,18 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 		}
 
 		user_transaction := users_service.UserSellTransaction{
-			Id:         id.String,
-			UserId:     first_name.String,
-			CoinId:     name.String,
-			CoinAmount: coin_amount.String,
-			CheckImg:   user_confirmation_img.String,
-			CoinPrice:  coin_price.String,
-			AllPrice:   all_price.String,
-			Status:     status.String,
-			CardNumber: payment_card.String,
-			Message:    message.String,
-			CreatedAt:  created_at.String,
+			Id:             id.String,
+			UserId:         first_name.String,
+			CoinId:         name.String,
+			CoinAmount:     coin_amount.String,
+			CheckImg:       user_confirmation_img.String,
+			CoinPrice:      coin_price.String,
+			AllPrice:       all_price.String,
+			Status:         status.String,
+			CardHolderName: card_name.String,
+			CardNumber:     payment_card.String,
+			Message:        message.String,
+			CreatedAt:      created_at.String,
 		}
 
 		resp.UserTransaction = append(resp.UserTransaction, &user_transaction)

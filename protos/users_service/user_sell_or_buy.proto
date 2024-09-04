@@ -34,10 +34,11 @@ message UserSellTransaction{
     string coin_amount = 5;
     string all_price = 6;
     string status = 7;
-    string card_number = 8;
-    string CheckImg = 9;
-    string message = 10;
-    string created_at = 11;
+    string card_holder_name = 8;
+    string card_number = 9;
+    string CheckImg = 10;
+    string message = 11;
+    string created_at = 12;
 }
 
 message UserSellRequest{
@@ -45,8 +46,9 @@ message UserSellRequest{
     string coin_id = 2;
     string coin_amount = 3;
     string message = 4;
-    string card_number = 5;
-    string check_img = 6;
+    string card_holder_name = 5;
+    string card_number = 6;
+    string check_img = 7;
 }
 
 message UserBuyRequest{

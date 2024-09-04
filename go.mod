@@ -3,7 +3,7 @@ module tg_go_users_service
 go 1.20
 
 require (
-	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/joho/godotenv v1.5.1
@@ -13,6 +13,7 @@ require (
 	golang.org/x/crypto v0.25.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
+	gorm.io/gorm v1.25.11
 )
 
 require (
@@ -25,6 +26,8 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.14.0 // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	go.uber.org/multierr v1.10.0 // indirect

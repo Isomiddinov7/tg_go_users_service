@@ -19,12 +19,12 @@ func NewAuthRepo(db *pgxpool.Pool) storage.AuthRepoI {
 	}
 }
 
-func (r *authRepo) SignIn(ctx context.Context, req *users_service.Credentials) (resp *users_service.CredetialId, err error) {
+func (r *authRepo) Auth(ctx context.Context, req *users_service.Req) (resp *users_service.AuthResp, err error) {
 	var (
 		query = `
 			SELECT 
 				id
-			FROM "super_admin"
+			FROM "admin"
 			WHERE "login" = $1 AND "password" = $2
 		`
 
@@ -37,7 +37,29 @@ func (r *authRepo) SignIn(ctx context.Context, req *users_service.Credentials) (
 		return nil, err
 	}
 
-	return &users_service.CredetialId{
-		Id: id.String,
+	return &users_service.AuthResp{
+		Success: "Success",
+		UserId:  id.String,
 	}, nil
+}
+
+func (r *authRepo) Deserialize(ctx context.Context, req *users_service.DReq) (err error) {
+	var (
+		query = `
+			SELECT 
+				id
+			FROM "admin"
+			WHERE "id" = $1
+		`
+
+		id sql.NullString
+	)
+	err = r.db.QueryRow(ctx, query, req.AdminId).Scan(
+		&id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

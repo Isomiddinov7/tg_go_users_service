@@ -3,12 +3,6 @@ CREATE TYPE BuyOrSell AS ENUM('buy', 'sell');
 CREATE TYPE MessageStatus AS ENUM('user', 'admin');
 CREATE TYPE MessageReadStatus AS ENUM('false', 'true');
 
-CREATE TABLE IF NOT EXISTS "super_admin"(
-    "id" UUID NOT NULL PRIMARY KEY,
-    "login" VARCHAR(255) UNIQUE NOT NULL,
-    "password" TEXT NOT NULL,
-    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE IF NOT EXISTS "coins"(
     "id" UUID NOT NULL PRIMARY KEY,
@@ -34,9 +28,8 @@ CREATE TABLE IF NOT EXISTS "users"(
     "first_name" VARCHAR NOT NULL,
     "last_name" VARCHAR,
     "username" VARCHAR,
-    "auth_date" VARCHAR,
-    "hash" TEXT,
     "status" StatusUser DEFAULT 'active',
+    "telegram_id" VARCHAR NOT NULL,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
 );
@@ -68,6 +61,7 @@ CREATE TABLE IF NOT EXISTS "user_transaction"(
     "all_price" VARCHAR NOT NULL,
     "status" BuyOrSell NOT NULL,
     "user_address" VARCHAR,
+    "card_name" VARCHAR,
     "payment_card" VARCHAR,
     "message" TEXT,
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -89,10 +83,10 @@ CREATE TABLE IF NOT EXISTS "messages"(
 -- INSERT INTO "admin"("id", "login", "password") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'bahodir2809', '123456789');
 -- INSERT INTO "super_admin"("id","login","password") VALUES('690d15b1-b3bf-416f-83e1-02b183ccb2f2', 'azam1222', '938791222');
 -- INSERT INTO "admin_address"("admin_id", "coin_id", "address") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'ecd98c25-4cd3-41f7-8526-5efe021533f7', 'addres$$TON');
-[
-      {"HalfCoinAmount": "0.5", "HalfCoinPrice": "650000"},
-      {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
-]
+-- [
+--       {"HalfCoinAmount": "0.5", "HalfCoinPrice": "650000"},
+--       {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
+-- ]
 -- CREATE TABLE IF NOT EXISTS "sell_coin"(
 --     "user_id" UUID NOT NULL REFERENCES "users"("id"),
 --     "coin_id" UUID NOT NULL REFERENCES "coins"("id"),
@@ -104,5 +98,12 @@ CREATE TABLE IF NOT EXISTS "messages"(
 --     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 --     "updated_at" TIMESTAMP
 -- );
+
+
+-- login password 
+--     success
+--     accsess token
+    
+
 
 

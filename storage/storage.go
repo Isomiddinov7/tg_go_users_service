@@ -37,5 +37,6 @@ type UserTransactionRepoI interface {
 }
 
 type AuthRepoI interface {
-	SignIn(ctx context.Context, req *users_service.Credentials) (resp *users_service.CredetialId, err error)
+	Auth(ctx context.Context, req *users_service.Req) (resp *users_service.AuthResp, err error)
+	Deserialize(ctx context.Context, req *users_service.DReq) (err error)
 }

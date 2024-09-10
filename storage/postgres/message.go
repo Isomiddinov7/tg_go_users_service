@@ -43,6 +43,7 @@ func (r *userMessageRepo) CreateUserMessage(ctx context.Context, req *users_serv
 		"false",
 		"dbecf401-64b3-4b9b-829a-c8b061431286",
 		req.UserId,
+		req.File,
 	)
 	if err != nil {
 		return err
@@ -76,6 +77,7 @@ func (r *userMessageRepo) CreateAdminMessage(ctx context.Context, req *users_ser
 		"false",
 		"dbecf401-64b3-4b9b-829a-c8b061431286",
 		req.UserId,
+		req.File,
 	)
 	if err != nil {
 		return err
@@ -88,7 +90,7 @@ func (r *userMessageRepo) UpdateMessage(ctx context.Context, req *users_service.
 		query = `
 			UPDATE "messages"
 			SET 
-				"read" = $2
+				"read" = $2,
 				"updated_at" = NOW()
 			WHERE "id" = $1
 		`

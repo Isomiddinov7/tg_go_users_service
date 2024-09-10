@@ -76,3 +76,15 @@ func (i *UserTransactionService) AllUserBuy(ctx context.Context, req *users_serv
 
 	return
 }
+
+func (i *UserTransactionService) TransactionUpdate(ctx context.Context, req *users_service.UpdateTransaction) (resp *users_service.Empty, err error) {
+
+	i.log.Info("---TransactionUpdate------>", logger.Any("req", req))
+	_, err = i.strg.UserTransaction().TransactionUpdate(ctx, req)
+	if err != nil {
+		i.log.Error("!!!UserTransaction->User->TransactionUpdate--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return
+}

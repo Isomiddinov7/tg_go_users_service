@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	HistoryService_HistoryUser_FullMethodName = "/coins_service.HistoryService/HistoryUser"
+	HistoryService_HistoryUser_FullMethodName    = "/coins_service.HistoryService/HistoryUser"
+	HistoryService_HistoryUserAll_FullMethodName = "/coins_service.HistoryService/HistoryUserAll"
 )
 
 // HistoryServiceClient is the client API for HistoryService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HistoryServiceClient interface {
 	HistoryUser(ctx context.Context, in *HistoryUserRequest, opts ...grpc.CallOption) (*HistoryUserResponse, error)
+	HistoryUserAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HistoryUserResponse, error)
 }
 
 type historyServiceClient struct {
@@ -46,11 +48,21 @@ func (c *historyServiceClient) HistoryUser(ctx context.Context, in *HistoryUserR
 	return out, nil
 }
 
+func (c *historyServiceClient) HistoryUserAll(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*HistoryUserResponse, error) {
+	out := new(HistoryUserResponse)
+	err := c.cc.Invoke(ctx, HistoryService_HistoryUserAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // HistoryServiceServer is the server API for HistoryService service.
 // All implementations must embed UnimplementedHistoryServiceServer
 // for forward compatibility
 type HistoryServiceServer interface {
 	HistoryUser(context.Context, *HistoryUserRequest) (*HistoryUserResponse, error)
+	HistoryUserAll(context.Context, *Empty) (*HistoryUserResponse, error)
 	mustEmbedUnimplementedHistoryServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedHistoryServiceServer struct {
 
 func (UnimplementedHistoryServiceServer) HistoryUser(context.Context, *HistoryUserRequest) (*HistoryUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HistoryUser not implemented")
+}
+func (UnimplementedHistoryServiceServer) HistoryUserAll(context.Context, *Empty) (*HistoryUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HistoryUserAll not implemented")
 }
 func (UnimplementedHistoryServiceServer) mustEmbedUnimplementedHistoryServiceServer() {}
 
@@ -92,6 +107,24 @@ func _HistoryService_HistoryUser_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HistoryService_HistoryUserAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HistoryServiceServer).HistoryUserAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: HistoryService_HistoryUserAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HistoryServiceServer).HistoryUserAll(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // HistoryService_ServiceDesc is the grpc.ServiceDesc for HistoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var HistoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HistoryUser",
 			Handler:    _HistoryService_HistoryUser_Handler,
+		},
+		{
+			MethodName: "HistoryUserAll",
+			Handler:    _HistoryService_HistoryUserAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

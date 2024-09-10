@@ -2,7 +2,7 @@ CREATE TYPE StatusUser AS ENUM('active', 'inactive');
 CREATE TYPE BuyOrSell AS ENUM('buy', 'sell');
 CREATE TYPE MessageStatus AS ENUM('user', 'admin');
 CREATE TYPE MessageReadStatus AS ENUM('false', 'true');
-
+CREATE TYPE TransactionStatus AS ENUM('pending', 'success', 'error');
 
 CREATE TABLE IF NOT EXISTS "coins"(
     "id" UUID NOT NULL PRIMARY KEY,
@@ -80,6 +80,36 @@ CREATE TABLE IF NOT EXISTS "messages"(
     "updated_at" TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "premium"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "name" VARCHAR NOT NULL,
+    "card_number" VARCHAR NOT NULL,
+    "img" VARCHAR NOT NULL,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "premium_price_month"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "month" VARCHAR NOT NULL,
+    "price" VARCHAR NOT NULL,
+    "premium_id" UUID NOT NULL REFERENCES "premium"("id"),
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "premium_transaction"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "phone_number" VARCHAR NOT NULL,
+    "telegram_username" VARCHAR NOT NULL,
+    "premium_id" UUID NOT NULL REFERENCES "premium"("id"),
+    "user_id" UUID NOT NULL REFERENCES "users"("id"),
+    "payment_img" VARCHAR NOT NULL,
+    "transaction_status" TransactionStatus DEFAULT 'pending',
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP
+);
+
 -- INSERT INTO "admin"("id", "login", "password") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'bahodir2809', '123456789');
 -- INSERT INTO "super_admin"("id","login","password") VALUES('690d15b1-b3bf-416f-83e1-02b183ccb2f2', 'azam1222', '938791222');
 -- INSERT INTO "admin_address"("admin_id", "coin_id", "address") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'ecd98c25-4cd3-41f7-8526-5efe021533f7', 'addres$$TON');
@@ -87,23 +117,7 @@ CREATE TABLE IF NOT EXISTS "messages"(
 --       {"HalfCoinAmount": "0.5", "HalfCoinPrice": "650000"},
 --       {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
 -- ]
--- CREATE TABLE IF NOT EXISTS "sell_coin"(
---     "user_id" UUID NOT NULL REFERENCES "users"("id"),
---     "coin_id" UUID NOT NULL REFERENCES "coins"("id"),
---     "address" VARCHAR NOT NULL,
---     "coin_amount" VARCHAR NOT NULL,
---     "number_of_card" VARCHAR NOT NULL,
---     "check_img" TEXT,
---     "price" VARCHAR NOT NULL,
---     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     "updated_at" TIMESTAMP
--- );
 
-
--- login password 
---     success
---     accsess token
-    
 
 
 

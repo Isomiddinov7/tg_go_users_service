@@ -240,6 +240,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 				ut.card_name,
 				ut.payment_card,
 				ut.message,
+				ut.transaction_status,
 				ut.created_at
 			FROM "user_transaction" as ut
 			JOIN "users" as u ON ut.user_id = u.id
@@ -282,6 +283,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			card_name             sql.NullString
 			payment_card          sql.NullString
 			message               sql.NullString
+			transaction_status    sql.NullString
 			created_at            sql.NullString
 		)
 
@@ -298,6 +300,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			&card_name,
 			&payment_card,
 			&message,
+			&transaction_status,
 			&created_at,
 		)
 		if err != nil {
@@ -305,18 +308,19 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 		}
 
 		user_transaction := users_service.UserSellTransaction{
-			Id:             id.String,
-			UserId:         first_name.String,
-			CoinId:         name.String,
-			CoinAmount:     coin_amount.String,
-			CheckImg:       user_confirmation_img.String,
-			CoinPrice:      coin_price.String,
-			AllPrice:       all_price.String,
-			Status:         status.String,
-			CardHolderName: card_name.String,
-			CardNumber:     payment_card.String,
-			Message:        message.String,
-			CreatedAt:      created_at.String,
+			Id:                id.String,
+			UserId:            first_name.String,
+			CoinId:            name.String,
+			CoinAmount:        coin_amount.String,
+			CheckImg:          user_confirmation_img.String,
+			CoinPrice:         coin_price.String,
+			AllPrice:          all_price.String,
+			Status:            status.String,
+			CardHolderName:    card_name.String,
+			CardNumber:        payment_card.String,
+			Message:           message.String,
+			TransactionStatus: transaction_status.String,
+			CreatedAt:         created_at.String,
 		}
 
 		resp.UserTransaction = append(resp.UserTransaction, &user_transaction)
@@ -340,6 +344,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 				ut.status,
 				ut.user_address,
 				ut.message,
+				ut.transaction_status,
 				ut.created_at
 			FROM "user_transaction" as ut
 			JOIN "users" as u ON ut.user_id = u.id
@@ -381,6 +386,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			status                sql.NullString
 			user_address          sql.NullString
 			message               sql.NullString
+			transaction_status    sql.NullString
 			created_at            sql.NullString
 		)
 
@@ -396,6 +402,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			&status,
 			&user_address,
 			&message,
+			&transaction_status,
 			&created_at,
 		)
 		if err != nil {
@@ -403,21 +410,44 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 		}
 
 		user_transaction := users_service.UserBuyTransaction{
-			Id:          id.String,
-			User:        first_name.String,
-			Coin:        name.String,
-			CoinAmount:  coin_amount.String,
-			CheckImg:    user_confirmation_img.String,
-			CoinPrice:   coin_price.String,
-			AllPrice:    all_price.String,
-			Status:      status.String,
-			UserAddress: user_address.String,
-			Message:     message.String,
-			CreatedAt:   created_at.String,
+			Id:                id.String,
+			User:              first_name.String,
+			Coin:              name.String,
+			CoinAmount:        coin_amount.String,
+			CheckImg:          user_confirmation_img.String,
+			CoinPrice:         coin_price.String,
+			AllPrice:          all_price.String,
+			Status:            status.String,
+			UserAddress:       user_address.String,
+			Message:           message.String,
+			TransactionStatus: transaction_status.String,
+			CreatedAt:         created_at.String,
 		}
 
 		resp.UserTransaction = append(resp.UserTransaction, &user_transaction)
 	}
 
 	return &resp, nil
+}
+
+func (r *userTransaction) TransactionUpdate(ctx context.Context, req *users_service.UpdateTransaction) (int64, error) {
+	var (
+		query = `
+			UPDATE "user_transaction"
+			SET 
+				"transaction_status" = $2,
+				"updated_at" = NOW()
+			WHERE "id" = $1
+		`
+	)
+
+	rowsAffected, err := r.db.Exec(ctx,
+		query,
+		req.Id,
+		req.TransactionStatus,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected.RowsAffected(), nil
 }

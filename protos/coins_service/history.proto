@@ -1,9 +1,10 @@
 syntax = "proto3";
 option go_package = "genproto/coins_service";
 package coins_service;
-
+import "coin.proto";
 service HistoryService{
     rpc HistoryUser(HistoryUserRequest) returns(HistoryUserResponse){}
+    rpc HistoryUserAll(Empty) returns(HistoryUserResponse){}
 }
 
 message HistoryUserRequest{
@@ -12,14 +13,15 @@ message HistoryUserRequest{
 
 message HistoriesUser{
     string id = 1;
-    string status = 2;
-    string coin_img = 3;
-    string coin_amount = 4;
-    string coin_price = 5;
-    string all_price = 6;
-    string address = 7;
-    string card_number = 8;
-    string date_time = 9;
+    string name = 2;
+    string status = 3;
+    string confirm_img = 4;
+    string coin_amount = 5;
+    string coin_price = 6;
+    string all_price = 7;
+    string address = 8;
+    string card_number = 9;
+    string date_time = 10;
 }
 
 message HistoryUserResponse{

@@ -34,6 +34,7 @@ type UserTransactionRepoI interface {
 	UserBuy(ctx context.Context, req *users_service.UserBuyRequest) error
 	AllUserSell(ctx context.Context, req *users_service.GetListUserTransactionRequest) (*users_service.GetListUserSellTransactionResponse, error)
 	AllUserBuy(ctx context.Context, req *users_service.GetListUserTransactionRequest) (*users_service.GetListUserBuyTransactionResponse, error)
+	TransactionUpdate(ctx context.Context, req *users_service.UpdateTransaction) (int64, error)
 }
 
 type AuthRepoI interface {

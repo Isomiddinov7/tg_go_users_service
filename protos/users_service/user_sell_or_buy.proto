@@ -8,6 +8,7 @@ import "user.proto";
 service UserSellOrBuyService{
     rpc UserSell(UserSellRequest) returns (Empty){}
     rpc UserBuy(UserBuyRequest) returns(Empty){}
+    rpc TransactionUpdate(UpdateTransaction)returns(Empty){}
     rpc AllUserSell(GetListUserTransactionRequest) returns(GetListUserSellTransactionResponse){}
     rpc AllUserBuy(GetListUserTransactionRequest) returns(GetListUserBuyTransactionResponse){}
 }
@@ -23,7 +24,8 @@ message UserBuyTransaction{
     string user_address = 8;
     string CheckImg = 9;
     string message = 10;
-    string created_at = 11;
+    string transaction_status = 11;
+    string created_at = 12;
 }
 
 message UserSellTransaction{
@@ -38,7 +40,8 @@ message UserSellTransaction{
     string card_number = 9;
     string CheckImg = 10;
     string message = 11;
-    string created_at = 12;
+    string transaction_status = 12;
+    string created_at = 13;
 }
 
 message UserSellRequest{
@@ -74,4 +77,9 @@ message GetListUserSellTransactionResponse{
 message GetListUserBuyTransactionResponse{
     int64 count = 1;
     repeated UserBuyTransaction user_transaction = 2;
+}
+
+message UpdateTransaction{
+    string id = 1;
+    string transaction_status = 2;
 }

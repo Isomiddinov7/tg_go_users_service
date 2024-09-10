@@ -241,10 +241,12 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 				ut.payment_card,
 				ut.message,
 				ut.transaction_status,
+				c.coin_icon,
 				ut.created_at
 			FROM "user_transaction" as ut
 			JOIN "users" as u ON ut.user_id = u.id
 			JOIN "coins" as c ON ut.coin_id = c.id
+			WHERE ut.status = 'sell'
 		`
 		resp   users_service.GetListUserSellTransactionResponse
 		where  = " WHERE TRUE"
@@ -284,6 +286,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			payment_card          sql.NullString
 			message               sql.NullString
 			transaction_status    sql.NullString
+			coin_icon             sql.NullString
 			created_at            sql.NullString
 		)
 
@@ -301,6 +304,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			&payment_card,
 			&message,
 			&transaction_status,
+			&coin_icon,
 			&created_at,
 		)
 		if err != nil {
@@ -320,6 +324,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			CardNumber:        payment_card.String,
 			Message:           message.String,
 			TransactionStatus: transaction_status.String,
+			CoinImg:           coin_icon.String,
 			CreatedAt:         created_at.String,
 		}
 
@@ -345,10 +350,12 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 				ut.user_address,
 				ut.message,
 				ut.transaction_status,
+				c.coin_icon,
 				ut.created_at
 			FROM "user_transaction" as ut
 			JOIN "users" as u ON ut.user_id = u.id
 			JOIN "coins" as c ON ut.coin_id = c.id
+			WHERE ut.status = 'buy'
 		`
 		resp   users_service.GetListUserBuyTransactionResponse
 		where  = " WHERE TRUE"
@@ -387,6 +394,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			user_address          sql.NullString
 			message               sql.NullString
 			transaction_status    sql.NullString
+			coin_icon             sql.NullString
 			created_at            sql.NullString
 		)
 
@@ -403,6 +411,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			&user_address,
 			&message,
 			&transaction_status,
+			&coin_icon,
 			&created_at,
 		)
 		if err != nil {
@@ -421,6 +430,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			UserAddress:       user_address.String,
 			Message:           message.String,
 			TransactionStatus: transaction_status.String,
+			CoinImg:           coin_icon.String,
 			CreatedAt:         created_at.String,
 		}
 

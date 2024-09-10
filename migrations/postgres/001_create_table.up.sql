@@ -64,10 +64,14 @@ CREATE TABLE IF NOT EXISTS "user_transaction"(
     "card_name" VARCHAR,
     "payment_card" VARCHAR,
     "message" TEXT,
+    "transaction_status" TransactionStatus DEFAULT 'pending',
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
 );
 
+
+-- ALTER TABLE user_transaction
+-- ADD transaction_status TransactionStatus DEFAULT 'pending';
 CREATE TABLE IF NOT EXISTS "messages"(
     "id" UUID NOT NULL PRIMARY KEY,
     "status" MessageStatus NOT NULL,
@@ -110,7 +114,7 @@ CREATE TABLE IF NOT EXISTS "premium_transaction"(
     "updated_at" TIMESTAMP
 );
 
--- INSERT INTO "admin"("id", "login", "password") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'bahodir2809', '123456789');
+-- INSERT INTO "admin"("id", "login", "password") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'Sayusupov1972', 'sayusupov1972');
 -- INSERT INTO "super_admin"("id","login","password") VALUES('690d15b1-b3bf-416f-83e1-02b183ccb2f2', 'azam1222', '938791222');
 -- INSERT INTO "admin_address"("admin_id", "coin_id", "address") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'ecd98c25-4cd3-41f7-8526-5efe021533f7', 'addres$$TON');
 -- [

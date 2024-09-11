@@ -88,3 +88,25 @@ func (i *UserTransactionService) TransactionUpdate(ctx context.Context, req *use
 
 	return
 }
+
+func (i *UserService) GetByIdTransactionBuy(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionBuy, err error) {
+	i.log.Info("---GetByIdTransactionBuy------>", logger.Any("req", req))
+
+	resp, err = i.strg.UserTransaction().GetByIdTransactionBuy(ctx, req)
+	if err != nil {
+		i.log.Error("!!!GetByIdTransactionBuy->UserTransaction->Get--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return resp, nil
+}
+
+func (i *UserService) GetByIdTransactionSell(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionSell, err error) {
+	i.log.Info("---GetByIdTransactionSell------>", logger.Any("req", req))
+
+	resp, err = i.strg.UserTransaction().GetByIdTransactionSell(ctx, req)
+	if err != nil {
+		i.log.Error("!!!GetByIdTransactionSell->UserTransaction->Get--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return resp, nil
+}

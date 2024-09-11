@@ -249,10 +249,9 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 			WHERE ut.status = 'sell'
 		`
 		resp   users_service.GetListUserSellTransactionResponse
-		where  = " WHERE TRUE"
 		offset = " OFFSET 0"
 		limit  = " LIMIT 10"
-		sort   = " ORDER BY created_at DESC"
+		sort   = " ORDER BY ut.created_at DESC"
 	)
 	if req.Offset > 0 {
 		offset = fmt.Sprintf(" OFFSET %d", req.Offset)
@@ -261,12 +260,9 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 	if req.Limit > 0 {
 		limit = fmt.Sprintf(" LIMIT %d", req.Limit)
 	}
-	if len(req.Status) > 0 {
-		where = fmt.Sprintf(" WHERE ut.status = '%s'", req.Status)
-	}
 
-	query += where + sort + offset + limit
-
+	query += sort + offset + limit
+	fmt.Println(query)
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -460,4 +456,196 @@ func (r *userTransaction) TransactionUpdate(ctx context.Context, req *users_serv
 		return 0, err
 	}
 	return rowsAffected.RowsAffected(), nil
+}
+
+func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionSell, err error) {
+	var (
+		query = `
+			SELECT 
+				ut.id,
+				ut.coin_id,
+				c.name,
+				ut.user_id,
+				u.username,
+				u.first_name,
+				u.telegram_id,
+				ut.coin_price,
+				ut.coin_amount,
+				ut.all_price,
+				ut.status,
+				ut.card_name,
+				ut.payment_card,
+				ut.user_confirmation_img,
+				ut.message,
+				ut.transaction_status,
+				c.coin_icon,
+				ut.created_at,
+				ut.updated_at
+			FROM "user_transaction" as ut
+			JOIN "coins" as c ON c.id = ut.coin_id
+			JOIN "users" as u ON u.id = ut.user_id
+			WHERE ut.id = $1
+		`
+
+		id                 sql.NullString
+		coin_id            sql.NullString
+		coin_name          sql.NullString
+		user_id            sql.NullString
+		user_name          sql.NullString
+		first_name         sql.NullString
+		telegram_id        sql.NullString
+		coin_price         sql.NullString
+		coin_amount        sql.NullString
+		all_price          sql.NullString
+		status             sql.NullString
+		card_holder_name   sql.NullString
+		card_number        sql.NullString
+		checkImg           sql.NullString
+		message            sql.NullString
+		transaction_status sql.NullString
+		coin_img           sql.NullString
+		created_at         sql.NullString
+		updated_at         sql.NullString
+	)
+
+	err = r.db.QueryRow(ctx, query, req.Id).Scan(
+		&id,
+		&coin_id,
+		&coin_name,
+		&user_id,
+		&user_name,
+		&first_name,
+		&telegram_id,
+		&coin_price,
+		&coin_amount,
+		&all_price,
+		&status,
+		&card_holder_name,
+		&card_number,
+		&checkImg,
+		&message,
+		&transaction_status,
+		&coin_img,
+		&created_at,
+		&updated_at,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &users_service.UserTransactionSell{
+		Id:                id.String,
+		CoinId:            coin_id.String,
+		CoinName:          coin_name.String,
+		UserId:            user_id.String,
+		UserName:          user_name.String,
+		FirstName:         first_name.String,
+		TelegramId:        telegram_id.String,
+		CoinPrice:         coin_price.String,
+		CoinAmount:        coin_amount.String,
+		AllPrice:          all_price.String,
+		Status:            status.String,
+		CardHolderName:    card_holder_name.String,
+		CardNumber:        card_number.String,
+		CheckImg:          checkImg.String,
+		Message:           message.String,
+		TransactionStatus: transaction_status.String,
+		CoinImg:           coin_img.String,
+		CreatedAt:         created_at.String,
+		UpdatedAt:         updated_at.String,
+	}, nil
+}
+
+func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionBuy, err error) {
+	var (
+		query = `
+			SELECT 
+				ut.id,
+				ut.coin_id,
+				c.name,
+				ut.user_id,
+				u.username,
+				u.first_name,
+				u.telegram_id,
+				ut.coin_price,
+				ut.coin_amount,
+				ut.all_price,
+				ut.status,
+				ut.user_address,
+				ut.user_confirmation_img,
+				ut.message,
+				ut.transaction_status,
+				c.coin_icon,
+				ut.created_at,
+				ut.updated_at
+			FROM "user_transaction" as ut
+			JOIN "coins" as c ON c.id = ut.coin_id
+			JOIN "users" as u ON u.id = ut.user_id
+			WHERE ut.id = $1
+		`
+
+		id                 sql.NullString
+		coin_id            sql.NullString
+		coin_name          sql.NullString
+		user_id            sql.NullString
+		user_name          sql.NullString
+		first_name         sql.NullString
+		telegram_id        sql.NullString
+		coin_price         sql.NullString
+		coin_amount        sql.NullString
+		all_price          sql.NullString
+		status             sql.NullString
+		user_address       sql.NullString
+		checkImg           sql.NullString
+		message            sql.NullString
+		transaction_status sql.NullString
+		coin_img           sql.NullString
+		created_at         sql.NullString
+		updated_at         sql.NullString
+	)
+
+	err = r.db.QueryRow(ctx, query, req.Id).Scan(
+		&id,
+		&coin_id,
+		&coin_name,
+		&user_id,
+		&user_name,
+		&first_name,
+		&telegram_id,
+		&coin_price,
+		&coin_amount,
+		&all_price,
+		&status,
+		&user_address,
+		&checkImg,
+		&message,
+		&transaction_status,
+		&coin_img,
+		&created_at,
+		&updated_at,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &users_service.UserTransactionBuy{
+		Id:                id.String,
+		CoinId:            coin_id.String,
+		CoinName:          coin_name.String,
+		UserId:            user_id.String,
+		UserName:          user_name.String,
+		FirstName:         first_name.String,
+		TelegramId:        telegram_id.String,
+		CoinPrice:         coin_price.String,
+		CoinAmount:        coin_amount.String,
+		AllPrice:          all_price.String,
+		Status:            status.String,
+		UserAddress:       user_address.String,
+		CheckImg:          checkImg.String,
+		Message:           message.String,
+		TransactionStatus: transaction_status.String,
+		CoinImg:           coin_img.String,
+		CreatedAt:         created_at.String,
+		UpdatedAt:         updated_at.String,
+	}, nil
 }

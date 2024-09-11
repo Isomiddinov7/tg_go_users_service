@@ -52,7 +52,6 @@ func (r *userRepo) Create(ctx context.Context, req *users_service.CreateUser) er
 }
 
 func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKey) (*users_service.User, error) {
-	fmt.Println(req)
 	var (
 		query = `
 			SELECT

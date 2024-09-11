@@ -8,9 +8,59 @@ import "user.proto";
 service UserSellOrBuyService{
     rpc UserSell(UserSellRequest) returns (Empty){}
     rpc UserBuy(UserBuyRequest) returns(Empty){}
+    rpc GetByIdTransactionSell(TransactioPrimaryKey) returns(UserTransactionSell){}
+    rpc GetByIdTransactionBuy(TransactioPrimaryKey) returns(UserTransactionBuy){}
     rpc TransactionUpdate(UpdateTransaction)returns(Empty){}
     rpc AllUserSell(GetListUserTransactionRequest) returns(GetListUserSellTransactionResponse){}
     rpc AllUserBuy(GetListUserTransactionRequest) returns(GetListUserBuyTransactionResponse){}
+}
+
+message TransactioPrimaryKey{
+    string id = 1;
+}
+
+message UserTransactionSell{
+    string id = 1;
+    string coin_id = 2;
+    string coin_name =3;
+    string user_id = 4;
+    string user_name = 5;
+    string first_name = 6;
+    string telegram_id = 7;
+    string coin_price = 8;
+    string coin_amount = 9;
+    string all_price = 10;
+    string status = 11;
+    string card_holder_name = 12;
+    string card_number = 13;
+    string CheckImg = 14;
+    string message = 15;
+    string transaction_status = 16;
+    string coin_img = 17;
+    string created_at = 18;
+    string updated_at = 19;
+}
+
+
+message UserTransactionBuy{
+    string id = 1;
+    string coin_id = 2;
+    string coin_name =3;
+    string user_id = 4;
+    string user_name = 5;
+    string first_name = 6;
+    string telegram_id = 7;
+    string coin_price = 8;
+    string coin_amount = 9;
+    string all_price = 10;
+    string status = 11;
+    string user_address = 12;
+    string CheckImg = 13;
+    string message = 14;
+    string transaction_status = 15;
+    string coin_img = 16;
+    string created_at = 17;
+    string updated_at = 18;
 }
 
 message UserBuyTransaction{

@@ -9,6 +9,7 @@ service TelegramPremiumService{
     rpc CreatePrice(CreateTelegramPremiumPrice) returns(TelegramPremiumPrice){}
     rpc CreatePremium(CreateTelegramPremium)returns(TelegramPremium){}
     rpc GetPremiumById(TelegramPriemiumPrimaryKey) returns(TelegramPremium){}
+    rpc GetPremiumList(GetPremiumListRequest) returns(GetPremiumListResponse){}
     rpc UpdateTransactionStatus(UpdateStatus) returns(Empty){}
     rpc PremiumTransaction(PremiumTransactionRequest) returns(Empty){}
     rpc GetList(GetListPremiumRequest) returns(GetPremiumTransactionResponse){}
@@ -73,11 +74,22 @@ message GetPremiumTransaction{
     string name = 2;
     string first_name = 3;
     string month = 4;
-    string created_at = 5;
-    string updated_at = 6;
+    string phone_number = 5;
+    string created_at = 6;
+    string updated_at = 7;
 }   
 
 message GetPremiumTransactionResponse{
     int64 count = 1;
     repeated GetPremiumTransaction transactions = 2;
+}
+
+message GetPremiumListRequest{
+    int64 offset = 1;
+    int64 limit = 2;
+}
+
+message GetPremiumListResponse{
+    int64 count = 1;
+    repeated TelegramPremium telegram_premium = 2;
 }

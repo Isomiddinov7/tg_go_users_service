@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+option go_package = "genproto/coins_service";
+
+package coins_service;
+
+import "coin.proto";
+
+service StarsService{
+    rpc Create(CreateStars) returns(Stars){}
+    rpc GetById(GetStarsPrimeryKey) returns(Stars){}
+    rpc GetList(GetListStarsRequest) returns(GetListStarsResponse){}
+    rpc Update(UpdateStars) returns(Empty){}
+    rpc CreateTransaction(CreateTransactionStars) returns(TransactionStars){}
+    rpc GetTransactionById(TransactionPrimaryKey) returns(TransactionStars){}
+    rpc GetListTransactionStars(GetListTransactionRequest) returns(GetListTransactionResponse){}
+
+}
+
+message Stars{
+    string id = 1;
+    string name = 2;
+    string count = 3;
+    string price = 4;
+    string img = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+message CreateStars{
+    string name = 1;
+    string count = 2;
+    string price = 3;
+    string img = 4;
+}
+
+message GetStarsPrimeryKey{
+    string id = 1;
+}
+
+message UpdateStars{
+    string id = 1;
+    string price = 2;
+}
+
+message GetListStarsRequest{
+    int64 limit = 1;
+    int64 offset = 2;
+}
+
+message GetListStarsResponse{
+    int64 count = 1;
+    repeated Stars stars = 2;
+}
+
+message CreateTransactionStars{
+    string stars_id = 1;
+    string transfer_img = 2;
+    string stars_count = 3;
+    string stars_price = 4;
+    string user_name = 5;
+    string telegram_id = 6;
+}
+
+message TransactionStars{
+    string id = 1;
+    string stars_id = 2;
+    string transfer_img = 3;
+    string stars_count = 4;
+    string stars_price = 5;
+    string user_name = 6;
+    string telegram_id = 7;
+    string created_at = 8;
+    string updated_at = 9;
+}
+
+message TransactionPrimaryKey{
+    string id = 1;
+}
+
+message GetListTransactionRequest{
+    int64 limit = 1;
+    int64 offset = 2;
+}
+
+message GetListTransactionResponse{
+    string id = 1;
+    string name = 2;
+    string img = 3;
+    string stars_count = 4;
+    string stars_price = 5;
+    string username = 6;
+    string telegram_id = 7;
+    string transfer_img = 8;
+    string created_at = 9;
+    string updated_at = 10;
+}

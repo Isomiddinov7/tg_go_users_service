@@ -53,17 +53,18 @@ message GetMessageUserResponse{
 }
 
 message AdminResponse{
-    string user_id = 1;
-    string first_name = 2;
-    string last_name = 3;
-    int64 message_count = 4;
-    string last_message = 5;
-    string file = 6;
+    int64 message_count = 1;
+    string last_message = 2;
+    string file = 3;
+    string read = 4;
 }
 
 message GetMessageAdminResponse{
-    repeated AdminResponse admin_message = 1;
-    int64 count = 2;
+    string user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    repeated AdminResponse admin_message = 4;
+    int64 count = 5;
 }
 
 message GetMessageAdminById{

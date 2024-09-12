@@ -179,11 +179,12 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 				u.first_name,
 				u.last_name,
 				m.file,
-				m.message
+				m.message,
+				m.read
 			FROM "messages" as m
 			JOIN "users" as u ON u.id=m.user_id
-			WHERE m."status" = 'user'
-			ORDER BY m.created_at DESC
+			WHERE m."status" = 'user' AND m."read" = 'false'
+			ORDER BY m.created_at ASC
 		`
 		resp users_service.GetMessageAdminResponse
 	)
@@ -191,6 +192,7 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	for rows.Next() {
 		var (
 			message      users_service.AdminResponse
@@ -199,6 +201,7 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 			last_name    sql.NullString
 			user_id      sql.NullString
 			file         sql.NullString
+			read         sql.NullString
 		)
 		err = rows.Scan(
 			&resp.Count,
@@ -207,19 +210,20 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 			&last_name,
 			&file,
 			&last_message,
+			&read,
 		)
 		if err != nil {
 			return nil, err
 		}
 		message = users_service.AdminResponse{
-			FirstName:   first_name.String,
-			LastName:    last_message.String,
-			UserId:      user_id.String,
 			File:        file.String,
 			LastMessage: last_message.String,
+			Read:        read.String,
 		}
 		resp.AdminMessage = append(resp.AdminMessage, &message)
-
+		resp.FirstName = first_name.String
+		resp.LastName = last_name.String
+		resp.UserId = user_id.String
 	}
 	return &resp, nil
 }

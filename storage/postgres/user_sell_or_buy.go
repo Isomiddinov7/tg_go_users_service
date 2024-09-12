@@ -354,7 +354,6 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 			WHERE ut.status = 'buy'
 		`
 		resp   users_service.GetListUserBuyTransactionResponse
-		where  = " WHERE TRUE"
 		offset = " OFFSET 0"
 		limit  = " LIMIT 10"
 		sort   = " ORDER BY created_at DESC"
@@ -366,11 +365,8 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 	if req.Limit > 0 {
 		limit = fmt.Sprintf(" LIMIT %d", req.Limit)
 	}
-	if len(req.Status) > 0 {
-		where = fmt.Sprintf(" WHERE ut.status = '%s'", req.Status)
-	}
 
-	query += where + sort + offset + limit
+	query += sort + offset + limit
 
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {

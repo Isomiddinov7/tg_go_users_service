@@ -28,6 +28,8 @@ type UserMessageRepoI interface {
 	GetAdminAllMessage(ctx context.Context) (resp *users_service.GetMessageAdminResponse, err error)
 	GetMessageAdminID(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageAdminById, err error)
 	SendMessageUser(ctx context.Context, req *users_service.TelegramMessageUser) (resp *users_service.TelegramMessageResponse, err error)
+	PayMessagePost(ctx context.Context, req *users_service.PaymsqRequest) error
+	PayMessageGet(ctx context.Context, req *users_service.PaymsqUser) (resp *users_service.PaymsqResponse, err error)
 }
 
 type UserTransactionRepoI interface {

@@ -26,6 +26,8 @@ const (
 	UserMessageList_GetAdminAllMessage_FullMethodName = "/users_service.UserMessageList/GetAdminAllMessage"
 	UserMessageList_GetMessageAdminID_FullMethodName  = "/users_service.UserMessageList/GetMessageAdminID"
 	UserMessageList_SendMessageUser_FullMethodName    = "/users_service.UserMessageList/SendMessageUser"
+	UserMessageList_PayMessagePost_FullMethodName     = "/users_service.UserMessageList/PayMessagePost"
+	UserMessageList_PayMessageGet_FullMethodName      = "/users_service.UserMessageList/PayMessageGet"
 )
 
 // UserMessageListClient is the client API for UserMessageList service.
@@ -39,6 +41,8 @@ type UserMessageListClient interface {
 	GetAdminAllMessage(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetMessageAdminResponse, error)
 	GetMessageAdminID(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageAdminById, error)
 	SendMessageUser(ctx context.Context, in *TelegramMessageUser, opts ...grpc.CallOption) (*TelegramMessageResponse, error)
+	PayMessagePost(ctx context.Context, in *PaymsqRequest, opts ...grpc.CallOption) (*Empty, error)
+	PayMessageGet(ctx context.Context, in *PaymsqUser, opts ...grpc.CallOption) (*PaymsqResponse, error)
 }
 
 type userMessageListClient struct {
@@ -112,6 +116,24 @@ func (c *userMessageListClient) SendMessageUser(ctx context.Context, in *Telegra
 	return out, nil
 }
 
+func (c *userMessageListClient) PayMessagePost(ctx context.Context, in *PaymsqRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, UserMessageList_PayMessagePost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMessageListClient) PayMessageGet(ctx context.Context, in *PaymsqUser, opts ...grpc.CallOption) (*PaymsqResponse, error) {
+	out := new(PaymsqResponse)
+	err := c.cc.Invoke(ctx, UserMessageList_PayMessageGet_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserMessageListServer is the server API for UserMessageList service.
 // All implementations must embed UnimplementedUserMessageListServer
 // for forward compatibility
@@ -123,6 +145,8 @@ type UserMessageListServer interface {
 	GetAdminAllMessage(context.Context, *Empty) (*GetMessageAdminResponse, error)
 	GetMessageAdminID(context.Context, *GetMessageUserRequest) (*GetMessageAdminById, error)
 	SendMessageUser(context.Context, *TelegramMessageUser) (*TelegramMessageResponse, error)
+	PayMessagePost(context.Context, *PaymsqRequest) (*Empty, error)
+	PayMessageGet(context.Context, *PaymsqUser) (*PaymsqResponse, error)
 	mustEmbedUnimplementedUserMessageListServer()
 }
 
@@ -150,6 +174,12 @@ func (UnimplementedUserMessageListServer) GetMessageAdminID(context.Context, *Ge
 }
 func (UnimplementedUserMessageListServer) SendMessageUser(context.Context, *TelegramMessageUser) (*TelegramMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendMessageUser not implemented")
+}
+func (UnimplementedUserMessageListServer) PayMessagePost(context.Context, *PaymsqRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PayMessagePost not implemented")
+}
+func (UnimplementedUserMessageListServer) PayMessageGet(context.Context, *PaymsqUser) (*PaymsqResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PayMessageGet not implemented")
 }
 func (UnimplementedUserMessageListServer) mustEmbedUnimplementedUserMessageListServer() {}
 
@@ -290,6 +320,42 @@ func _UserMessageList_SendMessageUser_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserMessageList_PayMessagePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PaymsqRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserMessageListServer).PayMessagePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserMessageList_PayMessagePost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserMessageListServer).PayMessagePost(ctx, req.(*PaymsqRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserMessageList_PayMessageGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PaymsqUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserMessageListServer).PayMessageGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserMessageList_PayMessageGet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserMessageListServer).PayMessageGet(ctx, req.(*PaymsqUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserMessageList_ServiceDesc is the grpc.ServiceDesc for UserMessageList service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +390,14 @@ var UserMessageList_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendMessageUser",
 			Handler:    _UserMessageList_SendMessageUser_Handler,
+		},
+		{
+			MethodName: "PayMessagePost",
+			Handler:    _UserMessageList_PayMessagePost_Handler,
+		},
+		{
+			MethodName: "PayMessageGet",
+			Handler:    _UserMessageList_PayMessageGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

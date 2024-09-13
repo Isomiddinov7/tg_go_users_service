@@ -13,6 +13,8 @@ service UserMessageList{
     rpc GetAdminAllMessage(Empty) returns(GetMessageAdminResponse){}
     rpc GetMessageAdminID(GetMessageUserRequest) returns(GetMessageAdminById){}
     rpc SendMessageUser(TelegramMessageUser) returns(TelegramMessageResponse){}
+    rpc PayMessagePost(PaymsqRequest) returns(Empty){}
+    rpc PayMessageGet(PaymsqUser) returns(PaymsqResponse){}
 }
 
 message UpdateMessageRequest{
@@ -90,4 +92,24 @@ message TelegramMessageResponse{
     string message = 1;
     string file = 2;
     string telegram_id = 3;
+}
+
+message PaymsqRequest{
+    string user_id = 1;
+    string file = 2;
+    string message = 3;
+}
+
+message PaymsqUser{
+    string user_id = 1;
+}
+
+message Paymsq{
+    string id = 1;
+    string file = 2;
+    string message = 3;
+}
+
+message PaymsqResponse{
+    repeated Paymsq message = 1;
 }

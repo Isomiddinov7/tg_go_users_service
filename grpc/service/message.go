@@ -106,3 +106,23 @@ func (i *MessageService) SendMessageUser(ctx context.Context, req *users_service
 	}
 	return
 }
+
+func (i *MessageService) PayMessagePost(ctx context.Context, req *users_service.PaymsqRequest) (resp *users_service.Empty, err error) {
+	i.log.Info("---PayMessagePost------>", logger.Any("req", ""))
+	err = i.strg.Messages().PayMessagePost(ctx, req)
+	if err != nil {
+		i.log.Error("!!!PayMessagePost->Message->PayMessagePost--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return
+}
+
+func (i *MessageService) PayMessageGet(ctx context.Context, req *users_service.PaymsqUser) (resp *users_service.PaymsqResponse, err error) {
+	i.log.Info("---PayMessageGet------>", logger.Any("req", ""))
+	resp, err = i.strg.Messages().PayMessageGet(ctx, req)
+	if err != nil {
+		i.log.Error("!!!PayMessageGet->Message->PayMessageGet--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return
+}

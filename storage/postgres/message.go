@@ -450,3 +450,76 @@ func (r *userMessageRepo) SendMessageUser(ctx context.Context, req *users_servic
 	return resp, nil
 
 }
+
+func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service.PaymsqRequest) error {
+	var (
+		query = `
+			INSERT INTO "pay_message"(
+				"id",
+				"message",
+				"file",
+				"user_id"
+			) VALUES($1, $2, $3, $4)
+
+		`
+		id = uuid.NewString()
+	)
+
+	_, err := r.db.Exec(ctx, query,
+		id,
+		req.Message,
+		req.File,
+		req.UserId,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.PaymsqUser) (*users_service.PaymsqResponse, error) {
+	var (
+		query = `
+			SELECT 
+				"id",
+				"file",
+				"message"
+			FROM "pay_message"
+			WHERE "user_id" = $1
+
+		`
+		resp     = &users_service.PaymsqResponse{}
+		messages []*users_service.Paymsq
+		id       sql.NullString
+		file     sql.NullString
+		message  sql.NullString
+	)
+
+	rows, err := r.db.Query(ctx, query, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+
+		err = rows.Scan(
+			&id,
+			&file,
+			&message,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		messages = append(messages, &users_service.Paymsq{
+			Id:      id.String,
+			File:    file.String,
+			Message: message.String,
+		})
+
+		resp.Message = messages
+	}
+
+	return resp, nil
+}

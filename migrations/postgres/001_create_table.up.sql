@@ -84,6 +84,15 @@ CREATE TABLE IF NOT EXISTS "messages"(
     "updated_at" TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "pay_message"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "message" TEXT NOT NULL,
+    "file" VARCHAR NOT NULL,
+    "user_id" UUID NOT NULL REFERENCES "users"("id"), 
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS "premium"(
     "id" UUID NOT NULL PRIMARY KEY,
     "name" VARCHAR NOT NULL,

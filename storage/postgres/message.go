@@ -170,6 +170,85 @@ func (r *userMessageRepo) GetUserMessage(ctx context.Context, req *users_service
 	return &resp, nil
 }
 
+// func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_service.GetMessageAdminResponse, error) {
+// 	var (
+// 		query = `
+// 			SELECT
+// 				COUNT(m.*) OVER(),
+// 				m.user_id,
+// 				u.first_name,
+// 				u.last_name,
+// 				m.file,
+// 				m.message,
+// 				m.read,
+// 				m.created_at,
+// 				m.updated_at
+// 			FROM "messages" as m
+// 			JOIN "users" as u ON u.id=m.user_id
+// 			WHERE m."status" = 'user' AND m."read" = 'false'
+// 			ORDER BY m.created_at ASC
+// 		`
+// 		resp            users_service.GetMessageAdminResponse
+// 		userMessagesMap = make(map[string]*users_service.AdminResponse)
+// 	)
+// 	rows, err := r.db.Query(ctx, query)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var (
+// 			message_response_message users_service.AdminResponseMessage
+// 			last_message             sql.NullString
+// 			first_name               sql.NullString
+// 			last_name                sql.NullString
+// 			user_id                  sql.NullString
+// 			file                     sql.NullString
+// 			read                     sql.NullString
+// 			created_at               sql.NullString
+// 			updated_at               sql.NullString
+// 		)
+// 		err = rows.Scan(
+// 			&resp.MessageCount,
+// 			&user_id,
+// 			&first_name,
+// 			&last_name,
+// 			&file,
+// 			&last_message,
+// 			&read,
+// 			&created_at,
+// 			&updated_at,
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		message_response_message = users_service.AdminResponseMessage{
+// 			LastMessage: last_message.String,
+// 			File:        file.String,
+// 			Read:        read.String,
+// 			CreatedAt:   created_at.String,
+// 			UpdatedAt:   updated_at.String,
+// 		}
+
+// 		if userResponse, exists := userMessagesMap[user_id.String]; exists {
+// 			userResponse.Message = append(userResponse.Message, &message_response_message)
+// 		} else {
+// 			userMessagesMap[user_id.String] = &users_service.AdminResponse{
+// 				UserId:    user_id.String,
+// 				FirstName: first_name.String,
+// 				LastName:  last_name.String,
+// 				Message:   []*users_service.AdminResponseMessage{&message_response_message},
+// 			}
+// 		}
+// 	}
+// 	for _, messageResponse := range userMessagesMap {
+// 		resp.AdminMessage = append(resp.AdminMessage, messageResponse)
+// 	}
+
+// 	return &resp, nil
+// }
+
 func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_service.GetMessageAdminResponse, error) {
 	var (
 		query = `
@@ -180,13 +259,16 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 				u.last_name,
 				m.file,
 				m.message,
-				m.read
+				m.read,
+				m.created_at,
+				m.updated_at
 			FROM "messages" as m
 			JOIN "users" as u ON u.id=m.user_id
 			WHERE m."status" = 'user' AND m."read" = 'false'
 			ORDER BY m.created_at ASC
 		`
-		resp users_service.GetMessageAdminResponse
+		resp            users_service.GetMessageAdminResponse
+		userMessagesMap = make(map[string]*users_service.AdminResponse)
 	)
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
@@ -195,36 +277,55 @@ func (r *userMessageRepo) GetAdminAllMessage(ctx context.Context) (*users_servic
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			message      users_service.AdminResponse
-			last_message sql.NullString
-			first_name   sql.NullString
-			last_name    sql.NullString
-			user_id      sql.NullString
-			file         sql.NullString
-			read         sql.NullString
+			message_response_message users_service.AdminResponseMessage
+			last_message             sql.NullString
+			first_name               sql.NullString
+			last_name                sql.NullString
+			user_id                  sql.NullString
+			file                     sql.NullString
+			read                     sql.NullString
+			created_at               sql.NullString
+			updated_at               sql.NullString
 		)
 		err = rows.Scan(
-			&resp.Count,
+			&resp.MessageCount,
 			&user_id,
 			&first_name,
 			&last_name,
 			&file,
 			&last_message,
 			&read,
+			&created_at,
+			&updated_at,
 		)
 		if err != nil {
 			return nil, err
 		}
-		message = users_service.AdminResponse{
-			File:        file.String,
+
+		message_response_message = users_service.AdminResponseMessage{
 			LastMessage: last_message.String,
+			File:        file.String,
 			Read:        read.String,
+			CreatedAt:   created_at.String,
+			UpdatedAt:   updated_at.String,
 		}
-		resp.AdminMessage = append(resp.AdminMessage, &message)
-		resp.FirstName = first_name.String
-		resp.LastName = last_name.String
-		resp.UserId = user_id.String
+
+		if userResponse, exists := userMessagesMap[user_id.String]; exists {
+			userResponse.Message = append(userResponse.Message, &message_response_message)
+		} else {
+			userMessagesMap[user_id.String] = &users_service.AdminResponse{
+				UserId:    user_id.String,
+				FirstName: first_name.String,
+				LastName:  last_name.String,
+				Message:   []*users_service.AdminResponseMessage{&message_response_message},
+			}
+		}
 	}
+
+	for _, messageResponse := range userMessagesMap {
+		resp.AdminMessage = append(resp.AdminMessage, messageResponse)
+	}
+
 	return &resp, nil
 }
 

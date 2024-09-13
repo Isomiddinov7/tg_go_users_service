@@ -480,7 +480,7 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			WHERE ut.id = $1
+			WHERE ut.id = $1 AND ut.status = 'sell
 		`
 
 		id                 sql.NullString
@@ -577,7 +577,7 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			WHERE ut.id = $1
+			WHERE ut.status = 'buy' AND ut.id = $1 
 		`
 
 		id                 sql.NullString
@@ -599,7 +599,7 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		created_at         sql.NullString
 		updated_at         sql.NullString
 	)
-
+	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	err = r.db.QueryRow(ctx, query, req.Id).Scan(
 		&id,
 		&coin_id,

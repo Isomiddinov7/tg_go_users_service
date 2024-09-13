@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"tg_go_users_service/config"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/grpc/client"
@@ -81,7 +80,6 @@ func (i *MessageService) GetUserMessage(ctx context.Context, req *users_service.
 func (i *MessageService) GetAdminAllMessage(ctx context.Context, req *users_service.Empty) (resp *users_service.GetMessageAdminResponse, err error) {
 	i.log.Info("---GetAdminAllMessage------>", logger.Any("req", ""))
 	resp, err = i.strg.Messages().GetAdminAllMessage(ctx)
-	fmt.Println(resp)
 	if err != nil {
 		i.log.Error("!!!GetAdminAllMessage->Message->GetAdminAllMessage--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())

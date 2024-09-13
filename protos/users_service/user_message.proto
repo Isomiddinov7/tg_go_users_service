@@ -52,20 +52,26 @@ message GetMessageUserResponse{
     int64 count = 2;
 }
 
-message AdminResponse{
-    int64 message_count = 1;
-    string last_message = 2;
-    string file = 3;
-    string read = 4;
+message AdminResponseMessage{
+    string last_message = 1;
+    string file = 2;
+    string read = 3;
+    string created_at = 4;
+    string updated_at = 5;
 }
 
-message GetMessageAdminResponse{
+message AdminResponse{
     string user_id = 1;
     string first_name = 2;
     string last_name = 3;
-    repeated AdminResponse admin_message = 4;
-    int64 count = 5;
+    repeated AdminResponseMessage message = 4;
 }
+
+message GetMessageAdminResponse{
+    int64 message_count = 1;
+    repeated AdminResponse admin_message = 2;
+}
+
 
 message GetMessageAdminById{
     string first_name = 1;

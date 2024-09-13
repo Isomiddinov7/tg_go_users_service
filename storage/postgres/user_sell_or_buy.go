@@ -480,7 +480,7 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			WHERE ut.id = $1 AND ut.status = 'sell
+			WHERE ut.status = 'sell' AND ut.id = $1
 		`
 
 		id                 sql.NullString

@@ -27,6 +27,7 @@ type UserMessageRepoI interface {
 	GetUserMessage(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageUserResponse, err error)
 	GetAdminAllMessage(ctx context.Context) (resp *users_service.GetMessageAdminResponse, err error)
 	GetMessageAdminID(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageAdminById, err error)
+	SendMessageUser(ctx context.Context, req *users_service.TelegramMessageUser) (resp *users_service.TelegramMessageResponse, err error)
 }
 
 type UserTransactionRepoI interface {

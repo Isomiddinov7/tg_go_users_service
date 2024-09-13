@@ -25,6 +25,7 @@ const (
 	UserMessageList_GetUserMessage_FullMethodName     = "/users_service.UserMessageList/GetUserMessage"
 	UserMessageList_GetAdminAllMessage_FullMethodName = "/users_service.UserMessageList/GetAdminAllMessage"
 	UserMessageList_GetMessageAdminID_FullMethodName  = "/users_service.UserMessageList/GetMessageAdminID"
+	UserMessageList_SendMessageUser_FullMethodName    = "/users_service.UserMessageList/SendMessageUser"
 )
 
 // UserMessageListClient is the client API for UserMessageList service.
@@ -37,6 +38,7 @@ type UserMessageListClient interface {
 	GetUserMessage(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageUserResponse, error)
 	GetAdminAllMessage(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetMessageAdminResponse, error)
 	GetMessageAdminID(ctx context.Context, in *GetMessageUserRequest, opts ...grpc.CallOption) (*GetMessageAdminById, error)
+	SendMessageUser(ctx context.Context, in *TelegramMessageUser, opts ...grpc.CallOption) (*TelegramMessageResponse, error)
 }
 
 type userMessageListClient struct {
@@ -101,6 +103,15 @@ func (c *userMessageListClient) GetMessageAdminID(ctx context.Context, in *GetMe
 	return out, nil
 }
 
+func (c *userMessageListClient) SendMessageUser(ctx context.Context, in *TelegramMessageUser, opts ...grpc.CallOption) (*TelegramMessageResponse, error) {
+	out := new(TelegramMessageResponse)
+	err := c.cc.Invoke(ctx, UserMessageList_SendMessageUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserMessageListServer is the server API for UserMessageList service.
 // All implementations must embed UnimplementedUserMessageListServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type UserMessageListServer interface {
 	GetUserMessage(context.Context, *GetMessageUserRequest) (*GetMessageUserResponse, error)
 	GetAdminAllMessage(context.Context, *Empty) (*GetMessageAdminResponse, error)
 	GetMessageAdminID(context.Context, *GetMessageUserRequest) (*GetMessageAdminById, error)
+	SendMessageUser(context.Context, *TelegramMessageUser) (*TelegramMessageResponse, error)
 	mustEmbedUnimplementedUserMessageListServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedUserMessageListServer) GetAdminAllMessage(context.Context, *E
 }
 func (UnimplementedUserMessageListServer) GetMessageAdminID(context.Context, *GetMessageUserRequest) (*GetMessageAdminById, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessageAdminID not implemented")
+}
+func (UnimplementedUserMessageListServer) SendMessageUser(context.Context, *TelegramMessageUser) (*TelegramMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessageUser not implemented")
 }
 func (UnimplementedUserMessageListServer) mustEmbedUnimplementedUserMessageListServer() {}
 
@@ -257,6 +272,24 @@ func _UserMessageList_GetMessageAdminID_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserMessageList_SendMessageUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TelegramMessageUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserMessageListServer).SendMessageUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserMessageList_SendMessageUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserMessageListServer).SendMessageUser(ctx, req.(*TelegramMessageUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserMessageList_ServiceDesc is the grpc.ServiceDesc for UserMessageList service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +320,10 @@ var UserMessageList_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMessageAdminID",
 			Handler:    _UserMessageList_GetMessageAdminID_Handler,
+		},
+		{
+			MethodName: "SendMessageUser",
+			Handler:    _UserMessageList_SendMessageUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

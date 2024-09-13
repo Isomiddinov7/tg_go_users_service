@@ -122,6 +122,12 @@ CREATE TABLE IF NOT EXISTS "premium_transaction"(
 --       {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
 -- ]
 
+INSERT INTO "users"("id", "first_name", "last_name", "username")
 
-
+id
+first_name
+last_name
+username
+status
+telegram_id
 

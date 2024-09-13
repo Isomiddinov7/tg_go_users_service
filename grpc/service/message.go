@@ -67,7 +67,7 @@ func (i *MessageService) UpdateMessage(ctx context.Context, req *users_service.U
 
 func (i *MessageService) GetUserMessage(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageUserResponse, err error) {
 
-	i.log.Info("---GetUserMessage------>", logger.Any("req", req))
+	i.log.Info("---GetUserMessage------>", logger.Any("req", ""))
 	resp, err = i.strg.Messages().GetUserMessage(ctx, req)
 	if err != nil {
 		i.log.Error("!!!GetUserMessage->Message->GetUserMessage--->", logger.Error(err))
@@ -92,6 +92,16 @@ func (i *MessageService) GetMessageAdminID(ctx context.Context, req *users_servi
 	resp, err = i.strg.Messages().GetMessageAdminID(ctx, req)
 	if err != nil {
 		i.log.Error("!!!GetAdminAllMessage->Message->GetAdminAllMessage--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return
+}
+
+func (i *MessageService) SendMessageUser(ctx context.Context, req *users_service.TelegramMessageUser) (resp *users_service.TelegramMessageResponse, err error) {
+	i.log.Info("---SendMessageUser------>", logger.Any("req", ""))
+	resp, err = i.strg.Messages().SendMessageUser(ctx, req)
+	if err != nil {
+		i.log.Error("!!!SendMessageUser->Message->SendMessageUser--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 	return

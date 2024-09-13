@@ -12,6 +12,7 @@ service UserMessageList{
     rpc GetUserMessage(GetMessageUserRequest) returns(GetMessageUserResponse){}
     rpc GetAdminAllMessage(Empty) returns(GetMessageAdminResponse){}
     rpc GetMessageAdminID(GetMessageUserRequest) returns(GetMessageAdminById){}
+    rpc SendMessageUser(TelegramMessageUser) returns(TelegramMessageResponse){}
 }
 
 message UpdateMessageRequest{
@@ -56,8 +57,9 @@ message AdminResponseMessage{
     string last_message = 1;
     string file = 2;
     string read = 3;
-    string created_at = 4;
-    string updated_at = 5;
+    string status = 4;
+    string created_at = 5;
+    string updated_at = 6;
 }
 
 message AdminResponse{
@@ -78,4 +80,14 @@ message GetMessageAdminById{
     string last_name = 2;
     string file = 3;
     repeated Message message = 4;
+}
+
+message TelegramMessageUser{
+    string id = 1;
+}
+
+message TelegramMessageResponse{
+    string message = 1;
+    string file = 2;
+    string telegram_id = 3;
 }

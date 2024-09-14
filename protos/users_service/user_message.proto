@@ -103,7 +103,7 @@ message PaymsqRequest{
 }
 
 message PaymsqUser{
-    string user_id = 1;
+    string user_transaction_id = 1;
 }
 
 message Paymsq{

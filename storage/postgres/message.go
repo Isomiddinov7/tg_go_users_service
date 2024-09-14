@@ -506,7 +506,7 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 		updated_at             sql.NullString
 	)
 
-	rows, err := r.db.Query(ctx, query, req.UserId)
+	rows, err := r.db.Query(ctx, query, req.UserTransactionId)
 	if err != nil {
 		return nil, err
 	}

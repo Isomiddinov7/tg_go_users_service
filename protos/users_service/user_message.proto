@@ -98,6 +98,8 @@ message PaymsqRequest{
     string user_id = 1;
     string file = 2;
     string message = 3;
+    string user_transaction_id = 4;
+    string premium_transaction_id = 5;
 }
 
 message PaymsqUser{
@@ -108,6 +110,10 @@ message Paymsq{
     string id = 1;
     string file = 2;
     string message = 3;
+    string user_transaction_id = 4;
+    string premium_transaction_id = 5;
+    string created_at = 6;
+    string updated_at = 7;
 }
 
 message PaymsqResponse{

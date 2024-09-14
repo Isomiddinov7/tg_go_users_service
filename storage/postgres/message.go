@@ -458,8 +458,10 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 				"id",
 				"message",
 				"file",
-				"user_id"
-			) VALUES($1, $2, $3, $4)
+				"user_id",
+				"user_transaction_id",
+				"premium_transaction_id"
+			) VALUES($1, $2, $3, $4, $5, $6)
 
 		`
 		id = uuid.NewString()
@@ -484,16 +486,24 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 			SELECT 
 				"id",
 				"file",
-				"message"
+				"message",
+				"user_transaction_id",
+				"premium_transaction_id",
+				"created_at",
+				"updated_at"
 			FROM "pay_message"
-			WHERE "user_id" = $1
+			WHERE "user_transaction_id" = $1
 
 		`
-		resp     = &users_service.PaymsqResponse{}
-		messages []*users_service.Paymsq
-		id       sql.NullString
-		file     sql.NullString
-		message  sql.NullString
+		resp                   = &users_service.PaymsqResponse{}
+		messages               []*users_service.Paymsq
+		id                     sql.NullString
+		file                   sql.NullString
+		message                sql.NullString
+		user_transaction_id    sql.NullString
+		premium_transaction_id sql.NullString
+		created_at             sql.NullString
+		updated_at             sql.NullString
 	)
 
 	rows, err := r.db.Query(ctx, query, req.UserId)
@@ -513,9 +523,13 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 		}
 
 		messages = append(messages, &users_service.Paymsq{
-			Id:      id.String,
-			File:    file.String,
-			Message: message.String,
+			Id:                   id.String,
+			File:                 file.String,
+			Message:              message.String,
+			UserTransactionId:    user_transaction_id.String,
+			PremiumTransactionId: premium_transaction_id.String,
+			CreatedAt:            created_at.String,
+			UpdatedAt:            updated_at.String,
 		})
 
 		resp.Message = messages

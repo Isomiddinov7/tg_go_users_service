@@ -92,6 +92,8 @@ message TelegramMessageResponse{
     string message = 1;
     string file = 2;
     string telegram_id = 3;
+    string created_at = 4;
+    string updated_at = 5;
 }
 
 message PaymsqRequest{

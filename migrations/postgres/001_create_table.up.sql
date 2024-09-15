@@ -88,8 +88,8 @@ CREATE TABLE IF NOT EXISTS "pay_message"(
     "id" UUID NOT NULL PRIMARY KEY,
     "message" TEXT NOT NULL,
     "file" VARCHAR NOT NULL,
-    "user_transaction_id" UUID,
-    "premium_transaction_id" UUID,
+    "user_transaction_id" VARCHAR,
+    "premium_transaction_id" VARCHAR,
     "user_id" UUID NOT NULL REFERENCES "users"("id"), 
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP

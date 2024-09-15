@@ -43,7 +43,6 @@ func (i *UserService) GetById(ctx context.Context, req *users_service.UserPrimar
 func (i *UserService) GetList(ctx context.Context, req *users_service.GetListUserRequest) (resp *users_service.GetListUserResponse, err error) {
 
 	i.log.Info("---GetUsers------>", logger.Any("req", req))
-
 	resp, err = i.strg.User().GetAll(ctx, req)
 	if err != nil {
 		i.log.Error("!!!GetUsers->User->Get--->", logger.Error(err))

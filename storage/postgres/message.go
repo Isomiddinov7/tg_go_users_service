@@ -422,6 +422,8 @@ func (r *userMessageRepo) SendMessageUser(ctx context.Context, req *users_servic
 				m."message",
 				u."telegram_id",
 				m."file"
+				m.created_at,
+				m.updated_at
 			FROM "messages" as m
 			JOIN "users" as u ON u."id"="user_id"
 			WHERE m.status = 'admin' AND m.user_id = $1 
@@ -431,12 +433,16 @@ func (r *userMessageRepo) SendMessageUser(ctx context.Context, req *users_servic
 		message     sql.NullString
 		telegram_id sql.NullString
 		file        sql.NullString
+		created_at  sql.NullString
+		updated_at  sql.NullString
 	)
 
 	err = r.db.QueryRow(ctx, query, req.Id).Scan(
 		&message,
 		&telegram_id,
 		&file,
+		&created_at,
+		&updated_at,
 	)
 	if err != nil {
 		return nil, err
@@ -446,6 +452,8 @@ func (r *userMessageRepo) SendMessageUser(ctx context.Context, req *users_servic
 		Message:    message.String,
 		TelegramId: telegram_id.String,
 		File:       file.String,
+		CreatedAt:  created_at.String,
+		UpdatedAt:  updated_at.String,
 	}
 	return resp, nil
 

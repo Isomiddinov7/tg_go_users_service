@@ -74,7 +74,7 @@ func (i *MessageService) GetUserMessage(ctx context.Context, req *users_service.
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return
+	return resp, nil
 }
 
 func (i *MessageService) GetAdminAllMessage(ctx context.Context, req *users_service.Empty) (resp *users_service.GetMessageAdminResponse, err error) {
@@ -84,7 +84,7 @@ func (i *MessageService) GetAdminAllMessage(ctx context.Context, req *users_serv
 		i.log.Error("!!!GetAdminAllMessage->Message->GetAdminAllMessage--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return
+	return resp, nil
 }
 
 func (i *MessageService) GetMessageAdminID(ctx context.Context, req *users_service.GetMessageUserRequest) (resp *users_service.GetMessageAdminById, err error) {
@@ -94,7 +94,7 @@ func (i *MessageService) GetMessageAdminID(ctx context.Context, req *users_servi
 		i.log.Error("!!!GetAdminAllMessage->Message->GetAdminAllMessage--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return
+	return resp, nil
 }
 
 func (i *MessageService) SendMessageUser(ctx context.Context, req *users_service.TelegramMessageUser) (resp *users_service.TelegramMessageResponse, err error) {
@@ -104,7 +104,7 @@ func (i *MessageService) SendMessageUser(ctx context.Context, req *users_service
 		i.log.Error("!!!SendMessageUser->Message->SendMessageUser--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return
+	return resp, nil
 }
 
 func (i *MessageService) PayMessagePost(ctx context.Context, req *users_service.PaymsqRequest) (resp *users_service.Empty, err error) {
@@ -114,7 +114,7 @@ func (i *MessageService) PayMessagePost(ctx context.Context, req *users_service.
 		i.log.Error("!!!PayMessagePost->Message->PayMessagePost--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return
+	return resp, nil
 }
 
 func (i *MessageService) PayMessageGet(ctx context.Context, req *users_service.PaymsqUser) (resp *users_service.PaymsqResponse, err error) {
@@ -124,5 +124,5 @@ func (i *MessageService) PayMessageGet(ctx context.Context, req *users_service.P
 		i.log.Error("!!!PayMessageGet->Message->PayMessageGet--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return
+	return resp, nil
 }

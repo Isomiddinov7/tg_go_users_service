@@ -472,6 +472,8 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 		req.Message,
 		req.File,
 		req.UserId,
+		req.UserTransactionId,
+		req.PremiumTransactionId,
 	)
 	if err != nil {
 		return err

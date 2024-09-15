@@ -469,7 +469,7 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 		queryUser = `
 			UPDATE "user_transaction" 
 				SET 
-					"transaction_status" = 'success'
+					"transaction_status" = 'success',
 					"updated_at" = NOW()
 			WHERE id = $1
 		`
@@ -477,7 +477,7 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 		queryPremium = `
 			UPDATE "premium_transaction"
 				SET 
-					"transaction_status" = 'success'
+					"transaction_status" = 'success',
 					"updated_at" = NOW()
 			WHERE id = $1
 		`

@@ -60,8 +60,8 @@ func Load() Config {
 	// config.PostgresDatabase = cast.ToString(getOrReturnDefaultValue("POSTGRES_DATABASE", "telegram_bot"))
 	// config.PostgresMaxConnections = cast.ToInt32(getOrReturnDefaultValue("POSTGRES_MAX_CONNECTIONS", 30))
 
-	config.UsersServiceHost = cast.ToString(getOrReturnDefaultValue("COINS_SERVICE_HOST", "localhost"))
-	config.UsersGRPCPort = cast.ToString(getOrReturnDefaultValue("COINS_GRPC_PORT", ":50502"))
+	config.UsersServiceHost = cast.ToString(getOrReturnDefaultValue("USERS_SERVICE_HOST", "localhost"))
+	config.UsersGRPCPort = cast.ToString(getOrReturnDefaultValue("USERS_GRPC_PORT", ":50502"))
 
 	return config
 }

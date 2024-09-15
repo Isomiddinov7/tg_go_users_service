@@ -465,6 +465,22 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 
 		`
 		id = uuid.NewString()
+
+		queryUser = `
+			UPDATE "user_transaction" 
+				SET 
+					"transaction_status" = 'success'
+					"updated_at" = NOW()
+			WHERE id = $1
+		`
+
+		queryPremium = `
+			UPDATE "premium_transaction"
+				SET 
+					"transaction_status" = 'success'
+					"updated_at" = NOW()
+			WHERE id = $1
+		`
 	)
 
 	_, err := r.db.Exec(ctx, query,
@@ -477,6 +493,19 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 	)
 	if err != nil {
 		return err
+	}
+
+	if len(req.PremiumTransactionId) > 0 {
+		_, err = r.db.Exec(ctx, queryPremium, req.PremiumTransactionId)
+		if err != nil {
+			return err
+		}
+	}
+	if len(req.UserTransactionId) > 0 {
+		_, err = r.db.Exec(ctx, queryUser, req.UserTransactionId)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -519,6 +548,10 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 			&id,
 			&file,
 			&message,
+			&user_transaction_id,
+			&premium_transaction_id,
+			&created_at,
+			&updated_at,
 		)
 		if err != nil {
 			return nil, err

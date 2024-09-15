@@ -399,12 +399,13 @@ func (r *userMessageRepo) GetMessageAdminID(ctx context.Context, req *users_serv
 			return nil, err
 		}
 		messages = users_service.Message{
-			Id:     id.String,
-			Text:   message.String,
-			File:   file.String,
-			Status: status.String,
-			Read:   read.String,
-			UserId: user_id.String,
+			Id:        id.String,
+			Text:      message.String,
+			File:      file.String,
+			Status:    status.String,
+			Read:      read.String,
+			UserId:    user_id.String,
+			CreatedAt: created_at.String,
 		}
 
 		resp.Message = append(resp.Message, &messages)
@@ -531,7 +532,7 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 				"created_at",
 				"updated_at"
 			FROM "pay_message"
-			WHERE "user_transaction_id" = $1
+			WHERE "user_id" = $1
 
 		`
 		resp                   = &users_service.PaymsqResponse{}

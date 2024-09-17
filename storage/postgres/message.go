@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
 
@@ -490,6 +491,22 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 					"updated_at" = NOW()
 			WHERE id = $1
 		`
+
+		queryUserError = `
+			UPDATE "user_transaction" 
+				SET 
+					"transaction_status" = 'error',
+					"updated_at" = NOW()
+			WHERE id = $1
+		`
+
+		queryPremiumError = `
+			UPDATE "premium_transaction"
+				SET 
+					"transaction_status" = 'error',
+					"updated_at" = NOW()
+			WHERE id = $1
+		`
 	)
 
 	_, err := r.db.Exec(ctx, query,
@@ -500,18 +517,28 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 		req.UserTransactionId,
 		req.PremiumTransactionId,
 	)
+	fmt.Println(len(req.Status))
 	if err != nil {
 		return err
 	}
-
-	if len(req.PremiumTransactionId) > 0 {
+	if len(req.PremiumTransactionId) > 0 && len(req.Status) == 0 {
 		_, err = r.db.Exec(ctx, queryPremium, req.PremiumTransactionId)
 		if err != nil {
 			return err
 		}
+	} else if len(req.PremiumTransactionId) > 0 && len(req.Status) > 0 {
+		_, err := r.db.Exec(ctx, queryPremiumError, req.PremiumTransactionId)
+		if err != nil {
+			return err
+		}
 	}
-	if len(req.UserTransactionId) > 0 {
+	if len(req.UserTransactionId) > 0 && len(req.Status) == 0 {
 		_, err = r.db.Exec(ctx, queryUser, req.UserTransactionId)
+		if err != nil {
+			return err
+		}
+	} else if len(req.UserTransactionId) > 0 && len(req.Status) > 0 {
+		_, err = r.db.Exec(ctx, queryUserError, req.UserTransactionId)
 		if err != nil {
 			return err
 		}

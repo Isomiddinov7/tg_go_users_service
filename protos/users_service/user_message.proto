@@ -102,6 +102,7 @@ message PaymsqRequest{
     string message = 3;
     string user_transaction_id = 4;
     string premium_transaction_id = 5;
+    string status = 6;
 }
 
 message PaymsqUser{

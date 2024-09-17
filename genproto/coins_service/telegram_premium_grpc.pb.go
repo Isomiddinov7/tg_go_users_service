@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TelegramPremiumService_CreatePrice_FullMethodName             = "/coins_service.TelegramPremiumService/CreatePrice"
-	TelegramPremiumService_CreatePremium_FullMethodName           = "/coins_service.TelegramPremiumService/CreatePremium"
-	TelegramPremiumService_GetPremiumById_FullMethodName          = "/coins_service.TelegramPremiumService/GetPremiumById"
-	TelegramPremiumService_GetPremiumList_FullMethodName          = "/coins_service.TelegramPremiumService/GetPremiumList"
-	TelegramPremiumService_UpdateTransactionStatus_FullMethodName = "/coins_service.TelegramPremiumService/UpdateTransactionStatus"
-	TelegramPremiumService_PremiumTransaction_FullMethodName      = "/coins_service.TelegramPremiumService/PremiumTransaction"
-	TelegramPremiumService_GetList_FullMethodName                 = "/coins_service.TelegramPremiumService/GetList"
+	TelegramPremiumService_CreatePrice_FullMethodName               = "/coins_service.TelegramPremiumService/CreatePrice"
+	TelegramPremiumService_CreatePremium_FullMethodName             = "/coins_service.TelegramPremiumService/CreatePremium"
+	TelegramPremiumService_GetPremiumById_FullMethodName            = "/coins_service.TelegramPremiumService/GetPremiumById"
+	TelegramPremiumService_GetPremiumList_FullMethodName            = "/coins_service.TelegramPremiumService/GetPremiumList"
+	TelegramPremiumService_UpdateTransactionStatus_FullMethodName   = "/coins_service.TelegramPremiumService/UpdateTransactionStatus"
+	TelegramPremiumService_PremiumTransaction_FullMethodName        = "/coins_service.TelegramPremiumService/PremiumTransaction"
+	TelegramPremiumService_GetList_FullMethodName                   = "/coins_service.TelegramPremiumService/GetList"
+	TelegramPremiumService_GetPremiumTransactionById_FullMethodName = "/coins_service.TelegramPremiumService/GetPremiumTransactionById"
 )
 
 // TelegramPremiumServiceClient is the client API for TelegramPremiumService service.
@@ -39,6 +40,7 @@ type TelegramPremiumServiceClient interface {
 	UpdateTransactionStatus(ctx context.Context, in *UpdateStatus, opts ...grpc.CallOption) (*Empty, error)
 	PremiumTransaction(ctx context.Context, in *PremiumTransactionRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetList(ctx context.Context, in *GetListPremiumRequest, opts ...grpc.CallOption) (*GetPremiumTransactionResponse, error)
+	GetPremiumTransactionById(ctx context.Context, in *GetPremiumTransactionPrimaryKey, opts ...grpc.CallOption) (*GetPremiumTransactionId, error)
 }
 
 type telegramPremiumServiceClient struct {
@@ -112,6 +114,15 @@ func (c *telegramPremiumServiceClient) GetList(ctx context.Context, in *GetListP
 	return out, nil
 }
 
+func (c *telegramPremiumServiceClient) GetPremiumTransactionById(ctx context.Context, in *GetPremiumTransactionPrimaryKey, opts ...grpc.CallOption) (*GetPremiumTransactionId, error) {
+	out := new(GetPremiumTransactionId)
+	err := c.cc.Invoke(ctx, TelegramPremiumService_GetPremiumTransactionById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TelegramPremiumServiceServer is the server API for TelegramPremiumService service.
 // All implementations must embed UnimplementedTelegramPremiumServiceServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type TelegramPremiumServiceServer interface {
 	UpdateTransactionStatus(context.Context, *UpdateStatus) (*Empty, error)
 	PremiumTransaction(context.Context, *PremiumTransactionRequest) (*Empty, error)
 	GetList(context.Context, *GetListPremiumRequest) (*GetPremiumTransactionResponse, error)
+	GetPremiumTransactionById(context.Context, *GetPremiumTransactionPrimaryKey) (*GetPremiumTransactionId, error)
 	mustEmbedUnimplementedTelegramPremiumServiceServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedTelegramPremiumServiceServer) PremiumTransaction(context.Cont
 }
 func (UnimplementedTelegramPremiumServiceServer) GetList(context.Context, *GetListPremiumRequest) (*GetPremiumTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetList not implemented")
+}
+func (UnimplementedTelegramPremiumServiceServer) GetPremiumTransactionById(context.Context, *GetPremiumTransactionPrimaryKey) (*GetPremiumTransactionId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPremiumTransactionById not implemented")
 }
 func (UnimplementedTelegramPremiumServiceServer) mustEmbedUnimplementedTelegramPremiumServiceServer() {
 }
@@ -291,6 +306,24 @@ func _TelegramPremiumService_GetList_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TelegramPremiumService_GetPremiumTransactionById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPremiumTransactionPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TelegramPremiumServiceServer).GetPremiumTransactionById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TelegramPremiumService_GetPremiumTransactionById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TelegramPremiumServiceServer).GetPremiumTransactionById(ctx, req.(*GetPremiumTransactionPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TelegramPremiumService_ServiceDesc is the grpc.ServiceDesc for TelegramPremiumService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -325,6 +358,10 @@ var TelegramPremiumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetList",
 			Handler:    _TelegramPremiumService_GetList_Handler,
+		},
+		{
+			MethodName: "GetPremiumTransactionById",
+			Handler:    _TelegramPremiumService_GetPremiumTransactionById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

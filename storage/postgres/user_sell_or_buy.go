@@ -271,6 +271,7 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 		offset = " OFFSET 0"
 		limit  = " LIMIT 10"
 		sort   = " ORDER BY ut.created_at DESC"
+		search = " "
 	)
 	if req.Offset > 0 {
 		offset = fmt.Sprintf(" OFFSET %d", req.Offset)
@@ -280,8 +281,11 @@ func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.Ge
 		limit = fmt.Sprintf(" LIMIT %d", req.Limit)
 	}
 
-	query += sort + offset + limit
-	fmt.Println(query)
+	if len(req.Search) > 0 {
+		search += " AND u.first_name ILIKE" + " '%" + req.Search + "%'" + " OR ut.payment_card ILIKE" + " '%" + req.Search + "%'" + " OR c.name ILIKE" + " '%" + req.Search + "%'"
+	}
+
+	query += search + sort + offset + limit
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {
 		return nil, err
@@ -376,6 +380,7 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 		offset = " OFFSET 0"
 		limit  = " LIMIT 10"
 		sort   = " ORDER BY created_at DESC"
+		search = " "
 	)
 	if req.Offset > 0 {
 		offset = fmt.Sprintf(" OFFSET %d", req.Offset)
@@ -385,7 +390,11 @@ func (r *userTransaction) AllUserBuy(ctx context.Context, req *users_service.Get
 		limit = fmt.Sprintf(" LIMIT %d", req.Limit)
 	}
 
-	query += sort + offset + limit
+	if len(req.Search) > 0 {
+		search += " AND u.first_name ILIKE" + " '%" + req.Search + "%'" + " OR ut.user_address ILIKE" + " '%" + req.Search + "%'" + " OR c.name ILIKE" + " '%" + req.Search + "%'"
+	}
+
+	query += search + sort + offset + limit
 
 	rows, err := r.db.Query(ctx, query)
 	if err != nil {

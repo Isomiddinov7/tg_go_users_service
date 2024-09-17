@@ -1,6 +1,8 @@
 module tg_go_users_service
 
-go 1.20
+go 1.21
+
+toolchain go1.23.1
 
 require (
 	github.com/google/uuid v1.6.0

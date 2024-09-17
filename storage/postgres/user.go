@@ -120,7 +120,7 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 	}
 
 	if len(req.Search) > 0 {
-		where += " AND user_name ILIKE" + " '%" + req.Search + "%'"
+		where += " AND last_name ILIKE" + " '%" + req.Search + "%'" + " OR first_name ILIKE" + " '%" + req.Search + "%'" + " OR username ILIKE" + " '%" + req.Search + "%'"
 	}
 
 	query := `

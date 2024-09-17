@@ -122,8 +122,8 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 	}
 	return nil
 }
-
 func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBuyRequest) error {
+	fmt.Println(req)
 	var (
 		id    = uuid.New().String()
 		query = `
@@ -157,10 +157,11 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
+
 	halfPrices := []*coins_service.HalfCoinPrice{}
 	for rows.Next() {
 		var (
-			halfPrice      = coins_service.HalfCoinPrice{}
 			halfCoinAmount sql.NullString
 			halfCoinPrice  sql.NullString
 		)
@@ -172,45 +173,62 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 		if err != nil {
 			return err
 		}
-		halfPrice = coins_service.HalfCoinPrice{
+		halfPrice := coins_service.HalfCoinPrice{
 			HalfCoinAmount: halfCoinAmount.String,
 			HalfCoinPrice:  halfCoinPrice.String,
 		}
 		halfPrices = append(halfPrices, &halfPrice)
 	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	// Coin narxini olish
 	var (
 		coin_buy_price sql.NullString
 		summ           float64
 	)
-	if cast.ToInt64(req.CoinAmount) >= 1 {
+
+	if cast.ToFloat64(req.CoinAmount) >= 1 {
 		query1 := `
-			SELECT
-				"coin_buy_price"
-			FROM "coins"
-			WHERE id = $1
+		SELECT
+			"coin_buy_price"
+		FROM "coins"
+		WHERE id = $1
 		`
-		err = r.db.QueryRow(ctx, query1, req.CoinId).Scan(
-			&coin_price,
-		)
+		err = r.db.QueryRow(ctx, query1, req.CoinId).Scan(&coin_price)
 		if err != nil {
 			return err
 		}
-		summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
 
+		if !coin_price.Valid {
+			return fmt.Errorf("coin price not found")
+		}
+
+		summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
 	} else {
-		for i := range halfPrices {
-			if cast.ToFloat64(req.CoinAmount) == cast.ToFloat64(halfPrices[i].HalfCoinAmount) {
-				coin_buy_price.String = cast.ToString(halfPrices[i].HalfCoinPrice)
+		found := false
+		for _, halfPrice := range halfPrices {
+			if cast.ToFloat64(req.CoinAmount) == cast.ToFloat64(halfPrice.HalfCoinAmount) {
+				coin_buy_price.String = halfPrice.HalfCoinPrice
+				coin_buy_price.String = halfPrice.HalfCoinPrice
+				found = true
+				break
 			}
+		}
+		if !found {
+			return fmt.Errorf("no matching half coin amount found")
 		}
 		summ = cast.ToFloat64(coin_buy_price.String)
 	}
+
 	_, err = r.db.Exec(ctx, query,
 		&id,
 		req.CoinId,
 		req.UserId,
 		req.PayImg,
-		&coin_price,
+		coin_price.String,
 		req.CoinAmount,
 		cast.ToString(summ),
 		"buy",
@@ -220,6 +238,7 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

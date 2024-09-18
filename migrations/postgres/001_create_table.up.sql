@@ -88,8 +88,8 @@ CREATE TABLE IF NOT EXISTS "pay_message"(
     "id" UUID NOT NULL PRIMARY KEY,
     "message" TEXT NOT NULL,
     "file" VARCHAR NOT NULL,
-    "user_transaction_id" VARCHAR,
-    "premium_transaction_id" VARCHAR,
+    "user_transaction_id" UUID,
+    "premium_transaction_id" UUID,
     "user_id" UUID NOT NULL REFERENCES "users"("id"), 
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
@@ -125,15 +125,31 @@ CREATE TABLE IF NOT EXISTS "premium_transaction"(
     "updated_at" TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "coin_nft"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "nft_img" VARCHAR NOT NULL,
+    "nft_price" VARCHAR NOT NULL,
+    "nft_address" VARCHAR NOT NULL,
+    "nft_name" VARCHAR NOT NULL,
+    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS "nft"(
     "id" UUID NOT NULL PRIMARY KEY,
     "nft_img" VARCHAR NOT NULL,
     "comment" VARCHAR NOT NULL,
     "user_id" UUID NOT NULL REFERENCES "users"("id"),
+    "coin_nft_id" UUID NOT NULL REFERENCES "coin_nft"("id"),
+    "telegram_id" VARCHAR NOT NULL,
+    "card_number" VARCHAR NOT NULL,
+    "card_number_name" VARCHAR NOT NULL,
     "status" TransactionStatus DEFAULT 'pending',
     "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP
 );
+
+
 
 -- INSERT INTO "admin"("id", "login", "password") VALUES('dbecf401-64b3-4b9b-829a-c8b061431286', 'Sayusupov1972', 'sayusupov1972');
 -- INSERT INTO "super_admin"("id","login","password") VALUES('690d15b1-b3bf-416f-83e1-02b183ccb2f2', 'azam1222', '938791222');
@@ -142,6 +158,8 @@ CREATE TABLE IF NOT EXISTS "nft"(
 --       {"HalfCoinAmount": "0.5", "HalfCoinPrice": "650000"},
 --       {"HalfCoinAmount": "0.8", "HalfCoinPrice": "80000"}
 -- ]
+
+
 
 
 

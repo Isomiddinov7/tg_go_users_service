@@ -110,7 +110,7 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 		req.CoinId,
 		req.CoinAmount,
 		req.CheckImg,
-		&coin_price,
+		coin_sell_price.String,
 		cast.ToString(summ),
 		"sell",
 		req.CardHolderName,
@@ -212,7 +212,6 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 		for _, halfPrice := range halfPrices {
 			if cast.ToFloat64(req.CoinAmount) == cast.ToFloat64(halfPrice.HalfCoinAmount) {
 				coin_buy_price.String = halfPrice.HalfCoinPrice
-				coin_buy_price.String = halfPrice.HalfCoinPrice
 				found = true
 				break
 			}
@@ -222,13 +221,12 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 		}
 		summ = cast.ToFloat64(coin_buy_price.String)
 	}
-
 	_, err = r.db.Exec(ctx, query,
 		&id,
 		req.CoinId,
 		req.UserId,
 		req.PayImg,
-		coin_price.String,
+		coin_buy_price.String,
 		req.CoinAmount,
 		cast.ToString(summ),
 		"buy",
@@ -508,7 +506,7 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			WHERE ut.status = 'sell' AND ut.id = $1
+			WHERE ut.status = 'sell' AND ut.id = '4573a09b-8a56-430d-99c6-2a85d11d2cba';
 		`
 
 		id                 sql.NullString
@@ -627,7 +625,6 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		created_at         sql.NullString
 		updated_at         sql.NullString
 	)
-	fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	err = r.db.QueryRow(ctx, query, req.Id).Scan(
 		&id,
 		&coin_id,

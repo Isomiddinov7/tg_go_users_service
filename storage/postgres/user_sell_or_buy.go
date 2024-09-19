@@ -648,7 +648,7 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(coin_price.String)
 	return &users_service.UserTransactionBuy{
 		Id:                id.String,
 		CoinId:            coin_id.String,

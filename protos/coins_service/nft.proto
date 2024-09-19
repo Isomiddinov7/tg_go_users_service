@@ -3,13 +3,18 @@ syntax = "proto3";
 option go_package = "genproto/coins_service";
 
 package coins_service;
+import "coin.proto";
+
 
 service NFTService{
     rpc Create(CreateNFT) returns(NFT){}
     rpc GetById(NFTPrimaryKey) returns(NFT){}
     rpc Update(UpdateNFT) returns(NFT){}
     rpc GetAll(GetListNFTRequest) returns(GetListNFTResponse){}
+    rpc Delete(NFTPrimaryKey) returns(Empty){}
 }
+
+
 
 message NFT{
     string id = 1;
@@ -17,14 +22,25 @@ message NFT{
     string comment = 3;
     string user_id = 4;
     string status = 5;
-    string created_at = 6;
-    string updated_at = 7;
+    string telegram_id = 6;
+    string first_name = 7;
+    string last_name = 8;
+    string user_name = 9;
+    string card_namber = 10;
+    string card_number_name = 11;
+    string nft_coin_img = 12;
+    string created_at = 13;
+    string updated_at = 14;
 }
 
 message CreateNFT{
-    string nft_img = 1;
-    string comment = 2;
-    string user_id = 3;
+    string coin_nft_id = 1;
+    string nft_img = 2;
+    string comment = 3;
+    string user_id = 4;
+    string telegram_id = 5;
+    string card_number = 6;
+    string card_number_name = 7;
 }
 
 message NFTPrimaryKey{
@@ -45,3 +61,4 @@ message GetListNFTResponse{
     int64 count = 1;
     repeated NFT nfts = 2;
 }
+

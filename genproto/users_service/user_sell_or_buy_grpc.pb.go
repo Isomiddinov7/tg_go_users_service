@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserSellOrBuyService_UserSell_FullMethodName               = "/users_service.UserSellOrBuyService/UserSell"
-	UserSellOrBuyService_UserBuy_FullMethodName                = "/users_service.UserSellOrBuyService/UserBuy"
-	UserSellOrBuyService_GetByIdTransactionSell_FullMethodName = "/users_service.UserSellOrBuyService/GetByIdTransactionSell"
-	UserSellOrBuyService_GetByIdTransactionBuy_FullMethodName  = "/users_service.UserSellOrBuyService/GetByIdTransactionBuy"
-	UserSellOrBuyService_TransactionUpdate_FullMethodName      = "/users_service.UserSellOrBuyService/TransactionUpdate"
-	UserSellOrBuyService_AllUserSell_FullMethodName            = "/users_service.UserSellOrBuyService/AllUserSell"
-	UserSellOrBuyService_AllUserBuy_FullMethodName             = "/users_service.UserSellOrBuyService/AllUserBuy"
+	UserSellOrBuyService_UserSell_FullMethodName                  = "/users_service.UserSellOrBuyService/UserSell"
+	UserSellOrBuyService_UserBuy_FullMethodName                   = "/users_service.UserSellOrBuyService/UserBuy"
+	UserSellOrBuyService_GetByIdTransactionSell_FullMethodName    = "/users_service.UserSellOrBuyService/GetByIdTransactionSell"
+	UserSellOrBuyService_GetByIdTransactionBuy_FullMethodName     = "/users_service.UserSellOrBuyService/GetByIdTransactionBuy"
+	UserSellOrBuyService_TransactionUpdate_FullMethodName         = "/users_service.UserSellOrBuyService/TransactionUpdate"
+	UserSellOrBuyService_AllUserSell_FullMethodName               = "/users_service.UserSellOrBuyService/AllUserSell"
+	UserSellOrBuyService_AllUserBuy_FullMethodName                = "/users_service.UserSellOrBuyService/AllUserBuy"
+	UserSellOrBuyService_GetHistoryTransactionUser_FullMethodName = "/users_service.UserSellOrBuyService/GetHistoryTransactionUser"
 )
 
 // UserSellOrBuyServiceClient is the client API for UserSellOrBuyService service.
@@ -39,6 +40,7 @@ type UserSellOrBuyServiceClient interface {
 	TransactionUpdate(ctx context.Context, in *UpdateTransaction, opts ...grpc.CallOption) (*Empty, error)
 	AllUserSell(ctx context.Context, in *GetListUserTransactionRequest, opts ...grpc.CallOption) (*GetListUserSellTransactionResponse, error)
 	AllUserBuy(ctx context.Context, in *GetListUserTransactionRequest, opts ...grpc.CallOption) (*GetListUserBuyTransactionResponse, error)
+	GetHistoryTransactionUser(ctx context.Context, in *HistoryUserTransactionPrimaryKey, opts ...grpc.CallOption) (*HistoryUserTransaction, error)
 }
 
 type userSellOrBuyServiceClient struct {
@@ -112,6 +114,15 @@ func (c *userSellOrBuyServiceClient) AllUserBuy(ctx context.Context, in *GetList
 	return out, nil
 }
 
+func (c *userSellOrBuyServiceClient) GetHistoryTransactionUser(ctx context.Context, in *HistoryUserTransactionPrimaryKey, opts ...grpc.CallOption) (*HistoryUserTransaction, error) {
+	out := new(HistoryUserTransaction)
+	err := c.cc.Invoke(ctx, UserSellOrBuyService_GetHistoryTransactionUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserSellOrBuyServiceServer is the server API for UserSellOrBuyService service.
 // All implementations must embed UnimplementedUserSellOrBuyServiceServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type UserSellOrBuyServiceServer interface {
 	TransactionUpdate(context.Context, *UpdateTransaction) (*Empty, error)
 	AllUserSell(context.Context, *GetListUserTransactionRequest) (*GetListUserSellTransactionResponse, error)
 	AllUserBuy(context.Context, *GetListUserTransactionRequest) (*GetListUserBuyTransactionResponse, error)
+	GetHistoryTransactionUser(context.Context, *HistoryUserTransactionPrimaryKey) (*HistoryUserTransaction, error)
 	mustEmbedUnimplementedUserSellOrBuyServiceServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedUserSellOrBuyServiceServer) AllUserSell(context.Context, *Get
 }
 func (UnimplementedUserSellOrBuyServiceServer) AllUserBuy(context.Context, *GetListUserTransactionRequest) (*GetListUserBuyTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AllUserBuy not implemented")
+}
+func (UnimplementedUserSellOrBuyServiceServer) GetHistoryTransactionUser(context.Context, *HistoryUserTransactionPrimaryKey) (*HistoryUserTransaction, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHistoryTransactionUser not implemented")
 }
 func (UnimplementedUserSellOrBuyServiceServer) mustEmbedUnimplementedUserSellOrBuyServiceServer() {}
 
@@ -290,6 +305,24 @@ func _UserSellOrBuyService_AllUserBuy_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserSellOrBuyService_GetHistoryTransactionUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HistoryUserTransactionPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserSellOrBuyServiceServer).GetHistoryTransactionUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserSellOrBuyService_GetHistoryTransactionUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserSellOrBuyServiceServer).GetHistoryTransactionUser(ctx, req.(*HistoryUserTransactionPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserSellOrBuyService_ServiceDesc is the grpc.ServiceDesc for UserSellOrBuyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +357,10 @@ var UserSellOrBuyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AllUserBuy",
 			Handler:    _UserSellOrBuyService_AllUserBuy_Handler,
+		},
+		{
+			MethodName: "GetHistoryTransactionUser",
+			Handler:    _UserSellOrBuyService_GetHistoryTransactionUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -110,3 +110,14 @@ func (i *UserTransactionService) GetByIdTransactionSell(ctx context.Context, req
 	}
 	return
 }
+
+func (i *UserTransactionService) GetHistoryTransactionUser(ctx context.Context, req *users_service.HistoryUserTransactionPrimaryKey) (resp *users_service.HistoryUserTransaction, err error) {
+	i.log.Info("---GetHistoryTransactionUser------>", logger.Any("req", req))
+
+	resp, err = i.strg.UserTransaction().GetHistoryTransactionUser(ctx, req)
+	if err != nil {
+		i.log.Error("!!!GetHistoryTransactionUser->UserTransaction->Get--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return
+}

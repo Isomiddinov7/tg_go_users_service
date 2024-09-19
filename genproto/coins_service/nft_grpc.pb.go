@@ -23,6 +23,7 @@ const (
 	NFTService_GetById_FullMethodName = "/coins_service.NFTService/GetById"
 	NFTService_Update_FullMethodName  = "/coins_service.NFTService/Update"
 	NFTService_GetAll_FullMethodName  = "/coins_service.NFTService/GetAll"
+	NFTService_Delete_FullMethodName  = "/coins_service.NFTService/Delete"
 )
 
 // NFTServiceClient is the client API for NFTService service.
@@ -33,6 +34,7 @@ type NFTServiceClient interface {
 	GetById(ctx context.Context, in *NFTPrimaryKey, opts ...grpc.CallOption) (*NFT, error)
 	Update(ctx context.Context, in *UpdateNFT, opts ...grpc.CallOption) (*NFT, error)
 	GetAll(ctx context.Context, in *GetListNFTRequest, opts ...grpc.CallOption) (*GetListNFTResponse, error)
+	Delete(ctx context.Context, in *NFTPrimaryKey, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type nFTServiceClient struct {
@@ -79,6 +81,15 @@ func (c *nFTServiceClient) GetAll(ctx context.Context, in *GetListNFTRequest, op
 	return out, nil
 }
 
+func (c *nFTServiceClient) Delete(ctx context.Context, in *NFTPrimaryKey, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, NFTService_Delete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NFTServiceServer is the server API for NFTService service.
 // All implementations must embed UnimplementedNFTServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type NFTServiceServer interface {
 	GetById(context.Context, *NFTPrimaryKey) (*NFT, error)
 	Update(context.Context, *UpdateNFT) (*NFT, error)
 	GetAll(context.Context, *GetListNFTRequest) (*GetListNFTResponse, error)
+	Delete(context.Context, *NFTPrimaryKey) (*Empty, error)
 	mustEmbedUnimplementedNFTServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedNFTServiceServer) Update(context.Context, *UpdateNFT) (*NFT, 
 }
 func (UnimplementedNFTServiceServer) GetAll(context.Context, *GetListNFTRequest) (*GetListNFTResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedNFTServiceServer) Delete(context.Context, *NFTPrimaryKey) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedNFTServiceServer) mustEmbedUnimplementedNFTServiceServer() {}
 
@@ -191,6 +206,24 @@ func _NFTService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NFTService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NFTPrimaryKey)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NFTServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NFTService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NFTServiceServer).Delete(ctx, req.(*NFTPrimaryKey))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NFTService_ServiceDesc is the grpc.ServiceDesc for NFTService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var NFTService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAll",
 			Handler:    _NFTService_GetAll_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _NFTService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

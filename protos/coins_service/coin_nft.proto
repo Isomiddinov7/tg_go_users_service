@@ -1,0 +1,63 @@
+
+syntax = "proto3";
+
+option go_package = "genproto/coins_service";
+
+package coins_service;
+import "coin.proto";
+
+
+service CoinNFTService{
+    rpc Create(CoinNFTCreate) returns(CoinNFT){}
+    rpc GetById(CoinNFTPrimaryKey) returns(CoinNFT){}
+    rpc Update(CoinNFTUpdate) returns(CoinNFT){}
+    rpc GetList(GetListCoinNFTRequest) returns(GetListCoinNFTResponse){}
+    rpc Delete(CoinNFTPrimaryKey) returns(Empty){}
+}
+
+
+
+
+message CoinNFT{
+    string id = 1;
+    string nft_img = 2;
+    string nft_price = 3;
+    string nft_address = 4;
+    string nft_name = 5;
+    string created_at = 6;
+    string updated_at = 7;
+}
+
+
+message CoinNFTCreate{
+    string id = 1;
+    string nft_img = 2;
+    string nft_price = 3;
+    string nft_address = 4;
+    string nft_name = 5;
+}
+
+message CoinNFTPrimaryKey{
+    string id = 1;
+}
+
+message CoinNFTUpdate{
+    string id = 1;
+    string nft_img = 2;
+    string nft_price = 3;
+    string nft_address = 4;
+    string nft_name = 5;
+}
+
+
+
+message GetListCoinNFTRequest{
+    int64 offset = 1;
+    int64 limit = 2;
+    string search = 3;
+}
+
+message GetListCoinNFTResponse{
+    int64 count = 1;
+    repeated CoinNFT coin_nfts = 2;
+}

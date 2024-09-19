@@ -460,7 +460,7 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			WHERE ut.status = 'sell' AND ut.id = $1;
+			WHERE ut.status = 'sell' AND ut.id = $1
 		`
 
 		id                 sql.NullString
@@ -623,4 +623,155 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		CreatedAt:         created_at.String,
 		UpdatedAt:         updated_at.String,
 	}, nil
+}
+
+func (r *userTransaction) GetHistoryTransactionUser(ctx context.Context, req *users_service.HistoryUserTransactionPrimaryKey) (*users_service.HistoryUserTransaction, error) {
+	var (
+		resp  users_service.HistoryUserTransaction
+		query = `
+			SELECT 
+				ut.id,
+				ut.coin_id,
+				c.name,
+				c.coin_icon,
+				ut.coin_price,
+				ut.coin_amount,
+				ut.all_price,
+				ut.status,
+				ut.user_address,
+				ut.user_confirmation_img,
+				ut.message,
+				ut.transaction_status,
+				ut.card_name,
+				ut.payment_card,
+				ut.created_at,
+				ut.updated_at
+			FROM "user_transaction" as ut
+			JOIN "users" as u ON  u.id = ut.user_id 
+			JOIN "coins" as c ON c.id = ut.coin_id
+			WHERE ut.user_id = $1
+		`
+		user_id            sql.NullString
+		first_name         sql.NullString
+		last_name          sql.NullString
+		username           sql.NullString
+		telegram_id        sql.NullString
+		id                 sql.NullString
+		coin_id            sql.NullString
+		coin_name          sql.NullString
+		coin_icon          sql.NullString
+		coin_price         sql.NullString
+		coin_amount        sql.NullString
+		all_price          sql.NullString
+		status             sql.NullString
+		user_address       sql.NullString
+		checkImg           sql.NullString
+		message            sql.NullString
+		transaction_status sql.NullString
+		card_name          sql.NullString
+		payment_card       sql.NullString
+		created_at         sql.NullString
+		updated_at         sql.NullString
+	)
+
+	rows, err := r.db.Query(ctx, query, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	queryUser := `
+			SELECT 
+				"id",
+				"first_name",
+				"last_name",
+				"username",
+				"telegram_id"
+			FROM "users"
+			WHERE "id" = $1
+		`
+	err = r.db.QueryRow(ctx, queryUser, req.UserId).Scan(
+		&user_id,
+		&first_name,
+		&last_name,
+		&username,
+		&telegram_id,
+	)
+
+	resp.UserId = user_id.String
+	resp.FirstName = first_name.String
+	resp.LastName = last_name.String
+	resp.Username = username.String
+
+	for rows.Next() {
+
+		err = rows.Scan(
+			&id,
+			&coin_id,
+			&coin_name,
+			&coin_icon,
+			&coin_price,
+			&coin_amount,
+			&all_price,
+			&status,
+			&user_address,
+			&checkImg,
+			&message,
+			&transaction_status,
+			&card_name,
+			&payment_card,
+			&created_at,
+			&updated_at,
+		)
+
+		if status.String == "buy" {
+			buy := users_service.UserTransactionBuy{
+				Id:                id.String,
+				CoinId:            coin_id.String,
+				CoinName:          coin_name.String,
+				UserId:            user_id.String,
+				UserName:          username.String,
+				FirstName:         first_name.String,
+				TelegramId:        telegram_id.String,
+				CoinPrice:         coin_price.String,
+				CoinAmount:        coin_amount.String,
+				AllPrice:          all_price.String,
+				Status:            status.String,
+				UserAddress:       user_address.String,
+				CheckImg:          checkImg.String,
+				Message:           message.String,
+				TransactionStatus: transaction_status.String,
+				CoinImg:           coin_icon.String,
+				CreatedAt:         created_at.String,
+				UpdatedAt:         updated_at.String,
+			}
+			resp.Buy = append(resp.Buy, &buy)
+		}
+		if status.String == "sell" {
+			sell := users_service.UserTransactionSell{
+				Id:                id.String,
+				CoinId:            coin_id.String,
+				CoinName:          coin_name.String,
+				UserId:            user_id.String,
+				UserName:          username.String,
+				FirstName:         first_name.String,
+				TelegramId:        telegram_id.String,
+				CoinPrice:         coin_price.String,
+				CoinAmount:        coin_amount.String,
+				AllPrice:          all_price.String,
+				Status:            status.String,
+				CardHolderName:    card_name.String,
+				CardNumber:        payment_card.String,
+				CheckImg:          checkImg.String,
+				Message:           message.String,
+				TransactionStatus: transaction_status.String,
+				CoinImg:           coin_icon.String,
+				CreatedAt:         created_at.String,
+				UpdatedAt:         updated_at.String,
+			}
+			resp.Sell = append(resp.Sell, &sell)
+		}
+	}
+
+	return &resp, nil
 }

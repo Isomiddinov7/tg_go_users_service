@@ -13,6 +13,7 @@ service UserSellOrBuyService{
     rpc TransactionUpdate(UpdateTransaction)returns(Empty){}
     rpc AllUserSell(GetListUserTransactionRequest) returns(GetListUserSellTransactionResponse){}
     rpc AllUserBuy(GetListUserTransactionRequest) returns(GetListUserBuyTransactionResponse){}
+    rpc GetHistoryTransactionUser(HistoryUserTransactionPrimaryKey) returns(HistoryUserTransaction){}
 }
 
 message TransactioPrimaryKey{
@@ -135,4 +136,17 @@ message GetListUserBuyTransactionResponse{
 message UpdateTransaction{
     string id = 1;
     string transaction_status = 2;
+}
+
+message HistoryUserTransactionPrimaryKey{
+    string user_id = 1;
+}
+
+message HistoryUserTransaction{
+    string user_id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string username = 4;
+    repeated UserTransactionSell sell = 5;
+    repeated UserTransactionBuy buy = 6;
 }

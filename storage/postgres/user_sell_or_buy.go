@@ -56,8 +56,6 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 		return err
 	}
 	summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
-	summ = cast.ToFloat64(coin_price.String)
-
 	_, err = r.db.Exec(ctx, query,
 		&id,
 		req.UserId,

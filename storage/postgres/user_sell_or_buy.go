@@ -41,76 +41,30 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 			) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		`
 		coin_price sql.NullString
-	)
-	var (
-		queryHalf = `
-			SELECT
-				"halfCoinAmount",
-				"halfCoinPrice"
-			FROM "half_coins_price"
-			WHERE "coin_id" = $1
-		`
+		summ       float64
 	)
 
-	rows, err := r.db.Query(ctx, queryHalf, req.CoinId)
-	if err != nil {
-		return err
-	}
-	halfPrices := []*coins_service.HalfCoinPrice{}
-	for rows.Next() {
-		var (
-			halfPrice      = coins_service.HalfCoinPrice{}
-			halfCoinAmount sql.NullString
-			halfCoinPrice  sql.NullString
-		)
-
-		err = rows.Scan(
-			&halfCoinAmount,
-			&halfCoinPrice,
-		)
-		if err != nil {
-			return err
-		}
-		halfPrice = coins_service.HalfCoinPrice{
-			HalfCoinAmount: halfCoinAmount.String,
-			HalfCoinPrice:  halfCoinPrice.String,
-		}
-		halfPrices = append(halfPrices, &halfPrice)
-	}
-	var (
-		coin_sell_price sql.NullString
-		summ            float64
-	)
-	if cast.ToInt64(req.CoinAmount) >= 1 {
-		query1 := `
+	queryFull := `
 			SELECT
 				"coin_sell_price"
 			FROM "coins"
 			WHERE id = $1
 		`
-		err = r.db.QueryRow(ctx, query1, req.CoinId).Scan(
-			&coin_price,
-		)
-		if err != nil {
-			return err
-		}
-		summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
-
-	} else {
-		for i := range halfPrices {
-			if cast.ToFloat64(req.CoinAmount) == cast.ToFloat64(halfPrices[i].HalfCoinAmount) {
-				coin_sell_price.String = cast.ToString(halfPrices[i].HalfCoinPrice)
-			}
-		}
-		summ = cast.ToFloat64(coin_sell_price.String)
+	err := r.db.QueryRow(ctx, queryFull, req.CoinId).Scan(&coin_price)
+	if err != nil {
+		fmt.Println("Error fetching full coin price:", err)
+		return err
 	}
+	summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
+	summ = cast.ToFloat64(coin_price.String)
+
 	_, err = r.db.Exec(ctx, query,
 		&id,
 		req.UserId,
 		req.CoinId,
 		req.CoinAmount,
 		req.CheckImg,
-		coin_sell_price.String,
+		coin_price.String,
 		cast.ToString(summ),
 		"sell",
 		req.CardHolderName,
@@ -118,12 +72,14 @@ func (r *userTransaction) UserSell(ctx context.Context, req *users_service.UserS
 		req.Message,
 	)
 	if err != nil {
+		fmt.Println("Error inserting transaction:", err)
 		return err
 	}
+
 	return nil
 }
+
 func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBuyRequest) error {
-	fmt.Println(req)
 	var (
 		id    = uuid.New().String()
 		query = `
@@ -184,7 +140,6 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 		return err
 	}
 
-	// Coin narxini olish
 	var (
 		coin_buy_price sql.NullString
 		summ           float64
@@ -201,12 +156,12 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 		if err != nil {
 			return err
 		}
-
 		if !coin_price.Valid {
 			return fmt.Errorf("coin price not found")
 		}
 
 		summ = cast.ToFloat64(req.CoinAmount) * cast.ToFloat64(coin_price.String)
+		coin_buy_price = coin_price
 	} else {
 		found := false
 		for _, halfPrice := range halfPrices {
@@ -241,7 +196,6 @@ func (r *userTransaction) UserBuy(ctx context.Context, req *users_service.UserBu
 }
 
 func (r *userTransaction) AllUserSell(ctx context.Context, req *users_service.GetListUserTransactionRequest) (*users_service.GetListUserSellTransactionResponse, error) {
-
 	var (
 		query = `
 			SELECT 

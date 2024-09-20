@@ -453,13 +453,11 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 				ut.message,
 				ut.transaction_status,
 				c.coin_icon,
-				m.file,
 				ut.created_at,
 				ut.updated_at
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			JOIN "pay_message" as m ON m.user_id = ut.user_id
 			WHERE ut.status = 'sell' AND ut.id = $1
 		`
 
@@ -529,7 +527,6 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 		Message:           message.String,
 		TransactionStatus: transaction_status.String,
 		CoinImg:           coin_img.String,
-		Success:           success_img.String,
 		CreatedAt:         created_at.String,
 		UpdatedAt:         updated_at.String,
 	}, nil
@@ -555,13 +552,11 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 				ut.message,
 				ut.transaction_status,
 				c.coin_icon,
-				m.file,
 				ut.created_at,
 				ut.updated_at
 			FROM "user_transaction" as ut
 			JOIN "coins" as c ON c.id = ut.coin_id
 			JOIN "users" as u ON u.id = ut.user_id
-			JOIN "pay_message" as m ON m.user_id = ut.user_id
 			WHERE ut.status = 'buy' AND ut.id = $1 
 		`
 
@@ -627,7 +622,6 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		Message:           message.String,
 		TransactionStatus: transaction_status.String,
 		CoinImg:           coin_img.String,
-		SuccessImg:        success_img.String,
 		CreatedAt:         created_at.String,
 		UpdatedAt:         updated_at.String,
 	}, nil

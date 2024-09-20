@@ -478,7 +478,6 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 		message            sql.NullString
 		transaction_status sql.NullString
 		coin_img           sql.NullString
-		success_img        sql.NullString
 		created_at         sql.NullString
 		updated_at         sql.NullString
 	)
@@ -501,7 +500,6 @@ func (r *userTransaction) GetByIdTransactionSell(ctx context.Context, req *users
 		&message,
 		&transaction_status,
 		&coin_img,
-		&success_img,
 		&created_at,
 		&updated_at,
 	)
@@ -576,7 +574,6 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		message            sql.NullString
 		transaction_status sql.NullString
 		coin_img           sql.NullString
-		success_img        sql.NullString
 		created_at         sql.NullString
 		updated_at         sql.NullString
 	)
@@ -597,14 +594,12 @@ func (r *userTransaction) GetByIdTransactionBuy(ctx context.Context, req *users_
 		&message,
 		&transaction_status,
 		&coin_img,
-		&success_img,
 		&created_at,
 		&updated_at,
 	)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(coin_price.String)
 	return &users_service.UserTransactionBuy{
 		Id:                id.String,
 		CoinId:            coin_id.String,

@@ -38,8 +38,9 @@ message UserTransactionSell{
     string message = 15;
     string transaction_status = 16;
     string coin_img = 17;
-    string created_at = 18;
-    string updated_at = 19;
+    string success = 18;
+    string created_at = 19;
+    string updated_at = 20;
 }
 
 
@@ -60,8 +61,9 @@ message UserTransactionBuy{
     string message = 14;
     string transaction_status = 15;
     string coin_img = 16;
-    string created_at = 17;
-    string updated_at = 18;
+    string success_img = 17;
+    string created_at = 18;
+    string updated_at = 19;
 }
 
 message UserBuyTransaction{

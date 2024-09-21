@@ -121,3 +121,14 @@ func (i *UserTransactionService) GetHistoryTransactionUser(ctx context.Context, 
 	}
 	return
 }
+
+func (i *UserTransactionService) GetTransactionSuccessImg(ctx context.Context, req *users_service.GetTransactionSuccessImgRequest) (resp *users_service.GetTransactionSuccessImgResponse, err error) {
+	i.log.Info("---GetTransactionSuccessImg------>", logger.Any("req", req))
+
+	resp, err = i.strg.UserTransaction().GetTransactionSuccessImg(ctx, req)
+	if err != nil {
+		i.log.Error("!!!GetTransactionSuccessImg->UserTransaction->Get--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	return
+}

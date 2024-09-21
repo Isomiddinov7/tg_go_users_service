@@ -27,6 +27,7 @@ const (
 	UserSellOrBuyService_AllUserSell_FullMethodName               = "/users_service.UserSellOrBuyService/AllUserSell"
 	UserSellOrBuyService_AllUserBuy_FullMethodName                = "/users_service.UserSellOrBuyService/AllUserBuy"
 	UserSellOrBuyService_GetHistoryTransactionUser_FullMethodName = "/users_service.UserSellOrBuyService/GetHistoryTransactionUser"
+	UserSellOrBuyService_GetTransactionSuccessImg_FullMethodName  = "/users_service.UserSellOrBuyService/GetTransactionSuccessImg"
 )
 
 // UserSellOrBuyServiceClient is the client API for UserSellOrBuyService service.
@@ -41,6 +42,7 @@ type UserSellOrBuyServiceClient interface {
 	AllUserSell(ctx context.Context, in *GetListUserTransactionRequest, opts ...grpc.CallOption) (*GetListUserSellTransactionResponse, error)
 	AllUserBuy(ctx context.Context, in *GetListUserTransactionRequest, opts ...grpc.CallOption) (*GetListUserBuyTransactionResponse, error)
 	GetHistoryTransactionUser(ctx context.Context, in *HistoryUserTransactionPrimaryKey, opts ...grpc.CallOption) (*HistoryUserTransaction, error)
+	GetTransactionSuccessImg(ctx context.Context, in *GetTransactionSuccessImgRequest, opts ...grpc.CallOption) (*GetTransactionSuccessImgResponse, error)
 }
 
 type userSellOrBuyServiceClient struct {
@@ -123,6 +125,15 @@ func (c *userSellOrBuyServiceClient) GetHistoryTransactionUser(ctx context.Conte
 	return out, nil
 }
 
+func (c *userSellOrBuyServiceClient) GetTransactionSuccessImg(ctx context.Context, in *GetTransactionSuccessImgRequest, opts ...grpc.CallOption) (*GetTransactionSuccessImgResponse, error) {
+	out := new(GetTransactionSuccessImgResponse)
+	err := c.cc.Invoke(ctx, UserSellOrBuyService_GetTransactionSuccessImg_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserSellOrBuyServiceServer is the server API for UserSellOrBuyService service.
 // All implementations must embed UnimplementedUserSellOrBuyServiceServer
 // for forward compatibility
@@ -135,6 +146,7 @@ type UserSellOrBuyServiceServer interface {
 	AllUserSell(context.Context, *GetListUserTransactionRequest) (*GetListUserSellTransactionResponse, error)
 	AllUserBuy(context.Context, *GetListUserTransactionRequest) (*GetListUserBuyTransactionResponse, error)
 	GetHistoryTransactionUser(context.Context, *HistoryUserTransactionPrimaryKey) (*HistoryUserTransaction, error)
+	GetTransactionSuccessImg(context.Context, *GetTransactionSuccessImgRequest) (*GetTransactionSuccessImgResponse, error)
 	mustEmbedUnimplementedUserSellOrBuyServiceServer()
 }
 
@@ -165,6 +177,9 @@ func (UnimplementedUserSellOrBuyServiceServer) AllUserBuy(context.Context, *GetL
 }
 func (UnimplementedUserSellOrBuyServiceServer) GetHistoryTransactionUser(context.Context, *HistoryUserTransactionPrimaryKey) (*HistoryUserTransaction, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHistoryTransactionUser not implemented")
+}
+func (UnimplementedUserSellOrBuyServiceServer) GetTransactionSuccessImg(context.Context, *GetTransactionSuccessImgRequest) (*GetTransactionSuccessImgResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionSuccessImg not implemented")
 }
 func (UnimplementedUserSellOrBuyServiceServer) mustEmbedUnimplementedUserSellOrBuyServiceServer() {}
 
@@ -323,6 +338,24 @@ func _UserSellOrBuyService_GetHistoryTransactionUser_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserSellOrBuyService_GetTransactionSuccessImg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionSuccessImgRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserSellOrBuyServiceServer).GetTransactionSuccessImg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserSellOrBuyService_GetTransactionSuccessImg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserSellOrBuyServiceServer).GetTransactionSuccessImg(ctx, req.(*GetTransactionSuccessImgRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserSellOrBuyService_ServiceDesc is the grpc.ServiceDesc for UserSellOrBuyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -361,6 +394,10 @@ var UserSellOrBuyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHistoryTransactionUser",
 			Handler:    _UserSellOrBuyService_GetHistoryTransactionUser_Handler,
+		},
+		{
+			MethodName: "GetTransactionSuccessImg",
+			Handler:    _UserSellOrBuyService_GetTransactionSuccessImg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

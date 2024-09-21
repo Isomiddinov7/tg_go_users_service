@@ -772,3 +772,30 @@ func (r *userTransaction) GetHistoryTransactionUser(ctx context.Context, req *us
 
 	return &resp, nil
 }
+
+func (r *userTransaction) GetTransactionSuccessImg(ctx context.Context, req *users_service.GetTransactionSuccessImgRequest) (resp *users_service.GetTransactionSuccessImgResponse, err error) {
+	var (
+		query = `
+			SELECT 
+				"message",
+				"file"
+			FROM "pay_message"
+			WHERE user_transaction_id = $1
+		`
+		success_img sql.NullString
+		comment     sql.NullString
+	)
+
+	err = r.db.QueryRow(ctx, query, req.UserTransactionId).Scan(
+		&success_img,
+		&comment,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &users_service.GetTransactionSuccessImgResponse{
+		SuccessImg: success_img.String,
+		Comment:    comment.String,
+	}, nil
+}

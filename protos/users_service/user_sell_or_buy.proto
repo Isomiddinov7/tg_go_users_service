@@ -14,6 +14,7 @@ service UserSellOrBuyService{
     rpc AllUserSell(GetListUserTransactionRequest) returns(GetListUserSellTransactionResponse){}
     rpc AllUserBuy(GetListUserTransactionRequest) returns(GetListUserBuyTransactionResponse){}
     rpc GetHistoryTransactionUser(HistoryUserTransactionPrimaryKey) returns(HistoryUserTransaction){}
+    rpc GetTransactionSuccessImg(GetTransactionSuccessImgRequest) returns(GetTransactionSuccessImgResponse){}
 }
 
 message TransactioPrimaryKey{
@@ -149,4 +150,13 @@ message HistoryUserTransaction{
     string username = 4;
     repeated UserTransactionSell sell = 5;
     repeated UserTransactionBuy buy = 6;
+}
+
+message GetTransactionSuccessImgRequest{
+    string user_transaction_id = 1;
+}
+
+message GetTransactionSuccessImgResponse{
+    string success_img = 1;
+    string comment = 2;
 }

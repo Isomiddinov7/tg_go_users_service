@@ -606,4 +606,3 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 
 	return resp, nil
 }
-	

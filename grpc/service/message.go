@@ -17,7 +17,7 @@ type MessageService struct {
 	log      logger.LoggerI
 	strg     storage.StorageI
 	services client.ServiceManagerI
-	*users_service.UnimplementedUserMessageListServer
+	users_service.UnimplementedUserMessageListServer
 }
 
 func NewMessageService(cfg config.Config, log logger.LoggerI, strg storage.StorageI, srvs client.ServiceManagerI) *MessageService {
@@ -108,7 +108,7 @@ func (i *MessageService) SendMessageUser(ctx context.Context, req *users_service
 }
 
 func (i *MessageService) PayMessagePost(ctx context.Context, req *users_service.PaymsqRequest) (resp *users_service.Empty, err error) {
-	i.log.Info("---PayMessagePost------>", logger.Any("req", ""))
+	i.log.Info("---PayMessagePost------>", logger.Any("req", req))
 	err = i.strg.Messages().PayMessagePost(ctx, req)
 	if err != nil {
 		i.log.Error("!!!PayMessagePost->Message->PayMessagePost--->", logger.Error(err))

@@ -17,7 +17,7 @@ type UserTransactionService struct {
 	log      logger.LoggerI
 	strg     storage.StorageI
 	services client.ServiceManagerI
-	*users_service.UnimplementedUserSellOrBuyServiceServer
+	users_service.UnimplementedUserSellOrBuyServiceServer
 }
 
 func NewUserTransactionService(cfg config.Config, log logger.LoggerI, strg storage.StorageI, srvs client.ServiceManagerI) *UserTransactionService {

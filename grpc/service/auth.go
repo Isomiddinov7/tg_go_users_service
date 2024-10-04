@@ -17,7 +17,7 @@ type AuthService struct {
 	log      logger.LoggerI
 	strg     storage.StorageI
 	services client.ServiceManagerI
-	*users_service.UnimplementedAuthServiceServer
+	users_service.UnimplementedAuthServiceServer
 }
 
 func NewAuthService(cfg config.Config, log logger.LoggerI, strg storage.StorageI, srvs client.ServiceManagerI) *AuthService {

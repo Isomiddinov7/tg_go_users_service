@@ -46,7 +46,6 @@ func (r *userRepo) Create(ctx context.Context, req *users_service.CreateUser) er
 		req.TelegramId,
 	)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -236,7 +235,7 @@ func (r *userRepo) Update(ctx context.Context, req *users_service.UpdateUser) (i
 			FROM "users"
 			WHERE "id" = $1
 		`
-		warningCount sql.NullInt64
+		warningCount sql.NullString
 	)
 
 	err := r.db.QueryRow(ctx, queryGet, req.Id).Scan(&warningCount)
@@ -244,7 +243,7 @@ func (r *userRepo) Update(ctx context.Context, req *users_service.UpdateUser) (i
 		return 0, err
 	}
 
-	warning := cast.ToInt64(warningCount.Int64) + cast.ToInt64(req.WarningCount)
+	warning := cast.ToInt64(warningCount.String) + cast.ToInt64(req.WarningCount)
 
 	if req.Status == "inactive" {
 		blockTime := time.Now().Add(72 * time.Hour).Format(time.RFC3339)

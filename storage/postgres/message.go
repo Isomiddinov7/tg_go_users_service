@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
 
@@ -517,7 +516,6 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 		req.UserTransactionId,
 		req.PremiumTransactionId,
 	)
-	fmt.Println(len(req.Status))
 	if err != nil {
 		return err
 	}
@@ -608,3 +606,4 @@ func (r *userMessageRepo) PayMessageGet(ctx context.Context, req *users_service.
 
 	return resp, nil
 }
+	

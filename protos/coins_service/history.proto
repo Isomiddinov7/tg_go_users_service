@@ -5,6 +5,8 @@ import "coin.proto";
 service HistoryService{
     rpc HistoryUser(HistoryUserRequest) returns(HistoryUserResponse){}
     rpc HistoryUserAll(Empty) returns(HistoryUserResponse){}
+    rpc HistoryMessage(HistoryUserRequest) returns(HistoryMessageResponse){}
+    rpc UpdateHistoryRead(HistoryUserRequest)returns(Empty){}
 }
 
 message HistoryUserRequest{
@@ -21,7 +23,11 @@ message HistoriesUser{
     string all_price = 7;
     string address = 8;
     string card_number = 9;
-    string date_time = 10;
+    string card_name = 10;
+    string date_time = 11;
+    string transaction_status = 12;
+    string coin_id = 13;
+    string user_id = 14;
 }
 
 message HistoryUserResponse{
@@ -29,3 +35,17 @@ message HistoryUserResponse{
     int64 count = 2;
 }
 
+message TransactionStatus{
+    string text = 1;
+    string status = 2;    
+    string message = 3;
+}
+
+message HistoryUserWithStatus {
+    HistoriesUser history_user = 1;
+    TransactionStatus history_status = 2;
+}
+
+message HistoryMessageResponse {
+    repeated HistoryUserWithStatus history_with_status = 1;
+}

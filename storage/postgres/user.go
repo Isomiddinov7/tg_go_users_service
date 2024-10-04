@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/spf13/cast"
 )
 
 type userRepo struct {
@@ -62,18 +64,23 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 				"status",
 				"telegram_id",
 				"created_at",
-				"updated_at"
+				"updated_at",
+				"warnig_count",
+				"block_time"
 			FROM "users"
 			WHERE "telegram_id"= $1
 		`
-		id          sql.NullString
-		first_name  sql.NullString
-		last_name   sql.NullString
-		username    sql.NullString
-		status      sql.NullString
-		telegram_id sql.NullString
-		created_at  sql.NullString
-		updated_at  sql.NullString
+		id           sql.NullString
+		first_name   sql.NullString
+		last_name    sql.NullString
+		username     sql.NullString
+		status       sql.NullString
+		telegram_id  sql.NullString
+		created_at   sql.NullString
+		updated_at   sql.NullString
+		warnig_count sql.NullString
+		block_time   sql.NullString
+		user_status  users_service.UserStatus
 	)
 
 	err := r.db.QueryRow(ctx, query, req.Id).Scan(
@@ -85,9 +92,24 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 		&telegram_id,
 		&created_at,
 		&updated_at,
+		&warnig_count,
+		&block_time,
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	if cast.ToInt64(warnig_count.String) == 5 || cast.ToInt64(warnig_count.String) == 10 {
+		user_status = users_service.UserStatus{
+			Status:       block_time.String,
+			WarningCount: warnig_count.String,
+		}
+
+	} else {
+		user_status = users_service.UserStatus{
+			Status:       status.String,
+			WarningCount: warnig_count.String,
+		}
 	}
 
 	return &users_service.User{
@@ -99,6 +121,7 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 		TelegramId: telegram_id.String,
 		CreatedAt:  created_at.String,
 		UpdatedAt:  updated_at.String,
+		UserStatus: &user_status,
 	}, nil
 }
 
@@ -194,19 +217,58 @@ func (r *userRepo) Update(ctx context.Context, req *users_service.UpdateUser) (i
 			UPDATE "users"
 				SET
 					"status" = $2,
+					"block_time" = $3,
 					"updated_at" = NOW()
 			WHERE "id" = $1
 		`
+		queryUpdate = `
+			UPDATE "users"
+				SET
+					"status" = 'inactive',
+					"block_time" = $2,
+					"warnig_count" = $3,
+					"updated_at" = NOW()
+			WHERE "id" = $1
+		`
+		queryGet = `
+			SELECT 
+				"warnig_count"
+			FROM "users"
+			WHERE "id" = $1
+		`
+		warningCount sql.NullInt64
 	)
 
-	rowsAffected, err := r.db.Exec(ctx,
-		query,
-		req.Id,
-		req.Status,
-	)
-
+	err := r.db.QueryRow(ctx, queryGet, req.Id).Scan(&warningCount)
 	if err != nil {
 		return 0, err
 	}
-	return rowsAffected.RowsAffected(), nil
+
+	warning := cast.ToInt64(warningCount.Int64) + cast.ToInt64(req.WarningCount)
+
+	if req.Status == "inactive" {
+		blockTime := time.Now().Add(72 * time.Hour).Format(time.RFC3339)
+		rowsAffected, err := r.db.Exec(ctx, query, req.Id, req.Status, blockTime)
+		if err != nil {
+			return 0, err
+		}
+		return rowsAffected.RowsAffected(), nil
+	}
+
+	var blockTime string
+	if warning == 5 {
+		blockTime = time.Now().Add(72 * time.Hour).Format(time.RFC3339)
+	} else if warning == 10 {
+		blockTime = time.Now().Add(360 * time.Hour).Format(time.RFC3339)
+	}
+
+	if blockTime != "" {
+		rowsAffected, err := r.db.Exec(ctx, queryUpdate, req.Id, blockTime, warning)
+		if err != nil {
+			return 0, err
+		}
+		return rowsAffected.RowsAffected(), nil
+	}
+
+	return 0, nil
 }

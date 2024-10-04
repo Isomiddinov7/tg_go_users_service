@@ -105,6 +105,15 @@ message PaymsqRequest{
     string status = 6;
 }
 
+message ReadPayMessage{
+    string id = 1;
+    string transaction_status = 2;
+    string message = 3;
+    string read = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
 message PaymsqUser{
     string user_transaction_id = 1;
 }

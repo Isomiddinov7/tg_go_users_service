@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/spf13/cast"
 )
 
 type userMessageRepo struct {
@@ -506,6 +508,22 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 					"updated_at" = NOW()
 			WHERE id = $1
 		`
+
+		queryUserPut = `
+			UPDATE "users"
+				SET 
+					"warnig_count" = $2,
+					"status" = $3,
+					"block_time" = $4
+			WHERE id = $1
+		`
+		queryUserGet = `
+			SELECT 
+				"warnig_count"
+			FROM "users"
+			WHERE "id" = $1
+		`
+		warnig_count sql.NullString
 	)
 
 	_, err := r.db.Exec(ctx, query,
@@ -530,16 +548,43 @@ func (r *userMessageRepo) PayMessagePost(ctx context.Context, req *users_service
 			return err
 		}
 	}
+
 	if len(req.UserTransactionId) > 0 && len(req.Status) == 0 {
 		_, err = r.db.Exec(ctx, queryUser, req.UserTransactionId)
 		if err != nil {
 			return err
 		}
 	} else if len(req.UserTransactionId) > 0 && len(req.Status) > 0 {
+		var (
+			sum    int64
+			status = "active"
+		)
 		_, err = r.db.Exec(ctx, queryUserError, req.UserTransactionId)
 		if err != nil {
 			return err
 		}
+
+		err = r.db.QueryRow(ctx, queryUserGet, req.UserId).Scan(
+			&warnig_count,
+		)
+		if err != nil {
+			return err
+		}
+
+		sum = cast.ToInt64(warnig_count.String) + 1
+		var (
+			block_time time.Time
+		)
+		if sum%5 == 0 {
+			block_time = time.Now().Add(3 * time.Hour)
+			status = "inactive"
+		}
+
+		_, err = r.db.Exec(ctx, queryUserPut, req.UserId, cast.ToString(sum), &status, block_time)
+		if err != nil {
+			return err
+		}
+
 	}
 
 	return nil

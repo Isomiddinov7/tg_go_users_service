@@ -52,34 +52,22 @@ func (i *UserService) GetList(ctx context.Context, req *users_service.GetListUse
 	return resp, nil
 }
 
-func (i *UserService) Update(ctx context.Context, req *users_service.UpdateUser) (resp *users_service.User, err error) {
-	i.log.Info("---UpdateUser------>", logger.Any("req", req))
-
-	rowsAffected, err := i.strg.User().Update(ctx, req)
-
-	if err != nil {
-		i.log.Error("!!!UpdateUser--->", logger.Error(err))
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	if rowsAffected <= 0 {
-		return nil, status.Error(codes.InvalidArgument, "no rows were affected")
-	}
-
-	resp, err = i.strg.User().GetByID(ctx, &users_service.UserPrimaryKey{Id: req.Id})
-	if err != nil {
-		i.log.Error("!!!UpdateUser->GetByID--->", logger.Error(err))
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	return resp, nil
-}
-
 func (i *UserService) Create(ctx context.Context, req *users_service.CreateUser) (resp *users_service.User, err error) {
 	i.log.Info("---CreateUser------>", logger.Any("req", req))
 	err = i.strg.User().Create(ctx, req)
 	if err != nil {
 		i.log.Error("!!!CreateUser->User->TelegramStart--->", logger.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	return resp, nil
+}
+
+func (i *UserService) Update(ctx context.Context, req *users_service.UpdateUserStatus) (resp *users_service.Empty, err error) {
+	i.log.Info("---UpdateUser------>", logger.Any("req", req))
+	err = i.strg.User().Update(ctx, req)
+	if err != nil {
+		i.log.Error("!!!UpdateUser->User->Telegram_active--->", logger.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 

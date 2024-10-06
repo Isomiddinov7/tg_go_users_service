@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"tg_go_users_service/genproto/users_service"
 	"tg_go_users_service/storage"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -98,7 +97,7 @@ func (r *userRepo) GetByID(ctx context.Context, req *users_service.UserPrimaryKe
 		return nil, err
 	}
 
-	if cast.ToInt64(warnig_count.String) == 5 || cast.ToInt64(warnig_count.String) == 10 {
+	if cast.ToInt64(warnig_count.String)%5 == 0 {
 		user_status = users_service.UserStatus{
 			Status:       block_time.String,
 			WarningCount: warnig_count.String,
@@ -210,64 +209,20 @@ func (r *userRepo) GetAll(ctx context.Context, req *users_service.GetListUserReq
 	return &resp, nil
 }
 
-func (r *userRepo) Update(ctx context.Context, req *users_service.UpdateUser) (int64, error) {
+func (r *userRepo) Update(ctx context.Context, req *users_service.UpdateUserStatus) (err error) {
 	var (
 		query = `
 			UPDATE "users"
 				SET
 					"status" = $2,
-					"block_time" = $3,
 					"updated_at" = NOW()
-			WHERE "id" = $1
+			WHERE "telegram_id" = $1
 		`
-		queryUpdate = `
-			UPDATE "users"
-				SET
-					"status" = 'inactive',
-					"block_time" = $2,
-					"warnig_count" = $3,
-					"updated_at" = NOW()
-			WHERE "id" = $1
-		`
-		queryGet = `
-			SELECT 
-				"warnig_count"
-			FROM "users"
-			WHERE "id" = $1
-		`
-		warningCount sql.NullString
 	)
 
-	err := r.db.QueryRow(ctx, queryGet, req.Id).Scan(&warningCount)
+	_, err = r.db.Exec(ctx, query, req.TelegramId, req.Status)
 	if err != nil {
-		return 0, err
+		return err
 	}
-
-	warning := cast.ToInt64(warningCount.String) + cast.ToInt64(req.WarningCount)
-
-	if req.Status == "inactive" {
-		blockTime := time.Now().Add(72 * time.Hour).Format(time.RFC3339)
-		rowsAffected, err := r.db.Exec(ctx, query, req.Id, req.Status, blockTime)
-		if err != nil {
-			return 0, err
-		}
-		return rowsAffected.RowsAffected(), nil
-	}
-
-	var blockTime string
-	if warning == 5 {
-		blockTime = time.Now().Add(72 * time.Hour).Format(time.RFC3339)
-	} else if warning == 10 {
-		blockTime = time.Now().Add(360 * time.Hour).Format(time.RFC3339)
-	}
-
-	if blockTime != "" {
-		rowsAffected, err := r.db.Exec(ctx, queryUpdate, req.Id, blockTime, warning)
-		if err != nil {
-			return 0, err
-		}
-		return rowsAffected.RowsAffected(), nil
-	}
-
-	return 0, nil
+	return nil
 }

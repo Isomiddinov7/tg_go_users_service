@@ -8,7 +8,7 @@ service UserService{
     rpc Create(CreateUser) returns (User){}
     rpc GetById(UserPrimaryKey) returns(User){}
     rpc GetList(GetListUserRequest) returns(GetListUserResponse){}
-    rpc Update(UpdateUser) returns(User){}
+    rpc Update(UpdateUserStatus) returns(Empty){}
 }
 
 message Empty{}
@@ -56,4 +56,9 @@ message GetListUserResponse{
 message UserStatus{
     string status = 1;
     string warning_count = 2;
+}
+
+message UpdateUserStatus{
+    string telegram_id = 1;
+    string status = 2;
 }

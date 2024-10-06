@@ -17,7 +17,7 @@ type UserRepoI interface {
 	Create(ctx context.Context, req *users_service.CreateUser) error
 	GetByID(ctx context.Context, req *users_service.UserPrimaryKey) (resp *users_service.User, err error)
 	GetAll(ctx context.Context, req *users_service.GetListUserRequest) (resp *users_service.GetListUserResponse, err error)
-	Update(ctx context.Context, req *users_service.UpdateUser) (rowsAffected int64, err error)
+	Update(ctx context.Context, req *users_service.UpdateUserStatus) (err error)
 }
 
 type UserMessageRepoI interface {
@@ -41,7 +41,7 @@ type UserTransactionRepoI interface {
 	GetByIdTransactionSell(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionSell, err error)
 	GetByIdTransactionBuy(ctx context.Context, req *users_service.TransactioPrimaryKey) (resp *users_service.UserTransactionBuy, err error)
 	GetHistoryTransactionUser(ctx context.Context, req *users_service.HistoryUserTransactionPrimaryKey) (resp *users_service.HistoryUserTransaction, err error)
-	GetTransactionSuccessImg(ctx context.Context, req *users_service.GetTransactionSuccessImgRequest)(resp *users_service.GetTransactionSuccessImgResponse, err error)
+	GetTransactionSuccessImg(ctx context.Context, req *users_service.GetTransactionSuccessImgRequest) (resp *users_service.GetTransactionSuccessImgResponse, err error)
 }
 
 type AuthRepoI interface {
